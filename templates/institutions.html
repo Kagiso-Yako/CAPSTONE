@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %} Institutions {% endblock %}
+
+{% block body %}
+
+  <span class="input-group input-group-xs"  >
+    <input type="text" placeholder="Search researchers..." class="form-control">
+    <button>search</button>
+  </span>
+
+<br><br>
+  <div>
+    <h1 class="pix-sliding-headline h3 text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Institutions</span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated"></span></span> </h1>
+  </div>
+    <br><br><br>
+    <p class="text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Apply</span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated">filter</span></span> </p>
+
+
+<div id="content">
+  <span class="input-group input-group-sm row" >
+    <div>
+    <label class="form-control col" > Institution
+      <select name="Institution" style="border:0px; float: right;" id="input_institution">
+        <option value="All">All</option>
+        <option value="University of Cape Town">University of Cape Town</option>
+        <option value="University of Western Cape">University of Western Cape</option>
+        <option value="University of KwaZulu Natal">University of KwaZulu Natal</option>
+        <option value="University of Johannesburg">University of Johannesburg</option>
+        <option value="Rhodes university">Rhodes university</option>
+      </select>
+    </label>
+    </div>
+    <div>
+    <label class="form-control col">Location
+      <select name="Location" style="border:0px; float: right;" id="input_Location" >
+        <option value="All">All</option>
+        <option value="Western Cape">Western Cape</option>
+        <option value="Gauteng">Gauteng</option>
+        <option value="North West">North West</option>
+        <option value="Nothern Cape">Northern Cape</option>
+      </select>
+    </label>
+    </div>
+    <div>
+    <label class="form-control col"> Number of rated researchers
+      <select name="Number of rated researchers" style="border:0px; float: right;" id="input_NumOfRes" >
+        <option value="All">All</option>
+        <option value="Q-Learning">Q-Learning</option>
+        <option value="Artificial Intelligence">Artificial Intelligence</option>
+        <option value="Deep learning">Deep learning</option>
+      </select>
+    </label>
+    </div>
+  </span>
+
+  <!-- <table class="table">
+    <tr class="thead-dark">
+      <th>Institution</th>
+      <th>Location</th>
+      <th>Number of rated researchers</th>
+    </tr>
+  
+    
+  </table> -->
+
+   
+  
+
+      <table class="table">  
+        <thead class="thead-dark">  
+          <td>Name</td>  
+          <td>Location</td>  
+          <td>Number of Researchers</td>  
+          
+
+            
+  
+        </thead>  
+
+        <tr>
+          <td><a href="/universityofcpt">University of Cape Town</a></td>
+          <td>Western Cape</td>
+          <td>200 </td>
+        </tr>
+        
+      {% for row in rows %}  
+
+
+        
+          <tr>  
+              <td>{{row["Name"]}}</td>   
+              <td>{{row["Location"]}}</td>  
+              <td>{{row["NumberOfResearchers"]}}</td>  
+               
+
+          </tr>  
+        
+      {% endfor %}  
+  </table>  
+  <br><br>  
+
+
+  <h2>Hi, welcome to the website</h2>  
+    <a href="/addInstitution">Add Institution</a><br><br>  
+    <a href ="/institution">List Institutions</a><br><br>  
+    <a href="/deleteInstitution">Delete Institution</a><br><br>  
+    
+  <a href="/">Go back to home page</a>  
+
+  
+</div>
+{% endblock %}
