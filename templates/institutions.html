@@ -54,58 +54,36 @@
     </div>
   </span>
 
-  <!-- <table class="table">
-    <tr class="thead-dark">
-      <th>Institution</th>
+  <table class="table" style="background-color: white">
+    <thead class="thead-dark">
+      <th>Name</th>
       <th>Location</th>
-      <th>Number of rated researchers</th>
-    </tr>
-  
-    
-  </table> -->
+      <th>Number of Researchers</th>
 
-   
-  
+    </thead>
 
-      <table class="table">  
-        <thead class="thead-dark">  
-          <td>Name</td>  
-          <td>Location</td>  
-          <td>Number of Researchers</td>  
-          
-
-            
-  
-        </thead>  
-
-        <tr>
-          <td><a href="/universityofcpt">University of Cape Town</a></td>
-          <td>Western Cape</td>
-          <td>200 </td>
-        </tr>
+      <tr>
+        <td><a href="/universityofcpt">University of Cape Town</a></td>
+        <td>Western Cape</td>
+        <td>200 </td>
+      </tr>
         
-      {% for row in rows %}  
-
-
-        
-          <tr>  
-              <td>{{row["Name"]}}</td>   
-              <td>{{row["Location"]}}</td>  
-              <td>{{row["NumberOfResearchers"]}}</td>  
-               
-
-          </tr>  
+      {% for row in rows %}
+      <tr>
+        <td>{{row[0]}}</td>
+        <td>{{row[1]}}</td>
+        <td>{{row[2]}}</td>
+      </tr>
         
       {% endfor %}  
-  </table>  
-  <br><br>  
+  </table>
 
+  <br><br>
 
-  <h2>Hi, welcome to the website</h2>  
+  <h2>Hi, welcome to the website</h2>
     <a href="/addInstitution">Add Institution</a><br><br>  
     <a href ="/institution">List Institutions</a><br><br>  
-    <a href="/deleteInstitution">Delete Institution</a><br><br>  
-    
+    <a href="/deleteInstitution">Delete Institution</a><br><br>
   <a href="/">Go back to home page</a>  
 
   

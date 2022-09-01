@@ -77,60 +77,59 @@
     </div>
   </span>
 
-  
-  <table class="table">  
-      <thead  class="thead-dark">  <tr>
-          <td>ID </td>  
-          <td>surname</td>  
-          <td>initials</td>  
-          <td>rating</td>
-          <td>institution</td> 
-          <td>Primary Research</td>
-          <td>Secondary Research</td>
+
+<table class="table" style="background-color: white">
+        <thead class="thead-dark">
+            <th>ID</th>
+            <th>Surname(s)</th>
+            <th>Initials</th>
+            <th>Title</th>
+            <th>Institution</th>
+            <th>Rating</th>
+            <th>Primary Research</th>
+            <th>Secondary Research</th>
+            <th>Specializations)</th>
+        </thead>
+        <tr>
+            <td>1</td>
+            <td><a href="/#">J Doe</a></td>
+            <td>J</td>
+            <td>Dr</td>
+            <td> <a href="/universityofcpt">University of Cape Town</a> </td>
+            <td> Y </td>
+            <td> Q learning </td>
+            <td> Artificial intelligence</td>
+            <td>robot swarm</td>
         </tr>
-      </thead> 
+    {% for row in rows %}
 
-      <tr>
-        <td>0</td>
-        <td><a href="/#">John Doe</a></td>
-        <td>Dr</td>
-        <td> Y </td>
-        <td> <a href="/universityofcpt">University of Cape Town</a> </td>
-        <td> Q learning </td>
-        <td> Artificial intelligence</td>
-      </tr>
-      
-      
+        <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+            <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td>
+            <td>{{row[4]}}</td>
+            <td>{{row[5]}}</td>
+            <td>{{row[6]}}</td>
+            <td>{{row[7]}}</td>
+            <td>{{row[8]}}</td>
 
-
-      
-        
-      {% for row in rows %}  
-        
-          <tr>  
-              <td>{{row["id"]}}</td>  
-              <td>{{row["surname"]}}</td>  
-              <td>{{row["initials"]}}</td>  
-              <td>{{row["rating"]}}</td> 
-              <td>{{row["institution"]}}</td>  
-              <td>{{row["primaryResearch"]}}</td> 
-              <td>{{row["secondaryResearch"]}}</td> 
-
-          </tr>  
-        
-      {% endfor %}  
-  </table>  
-  <br><br>  
+        </tr>
+    {% endfor %}
 
 
-  <h2>Hi, welcome to the website</h2>  
-    <a href="/add">Add Researcher</a><br><br>  
-    <a href ="/researchers">Refresh</a><br><br>  
-    <a href="/delete">Delete Researcher</a><br><br>  
-    
-  <a href="/">Go back to home page</a>  
+</table>
+  <br><br>
 
-  
+
+  <h2>Hi, welcome to the website</h2>
+    <a href="/add">Add Researcher</a><br><br>
+    <a href ="/researchers">Refresh</a><br><br>
+    <a href="/delete">Delete Researcher</a><br><br>
+
+  <a href="/">Go back to home page</a>
+
+
 </div>
 {% endblock %}
 
