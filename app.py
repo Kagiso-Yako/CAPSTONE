@@ -21,7 +21,7 @@ from DB_auto_setup import DB_auto_setup
 table_name = "Researchers"
 NRF_Excel_path = "Data/Current-Rated-Researchers-22-August-2022.xlsx"
 excel_sheet_name = 'Current Rated Researchers (Webs'
-csv_file = "DB.csv"
+csv_file = "Data/DB.csv"
 NRF_database_file = "Data/Database.db"
 url = "https://www.nrf.ac.za/wp-content/uploads/2022/08/Current-Rated-Researchers-22-August-2022.xlsx"
 
@@ -77,4 +77,5 @@ if __name__ == '__main__':
     table = "Researchers"
     auto = DB_auto_setup(NRF_database_file, NRF_Excel_path, excel_sheet_name, columns_csv, csv_file, table_name,
                          columns, url)
+    #auto.set_up_DB(url)
     app.run(debug=True)

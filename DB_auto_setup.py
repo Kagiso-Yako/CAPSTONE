@@ -12,6 +12,16 @@ from SQL_queries import SQL_queries
 
 
 class DB_auto_setup:
+    topics = ["Artificial intelligence",
+              "Natural language processing",
+              "Knowledge representation and reasoning",
+              "Search methodologies",
+              "Control methods",
+              "Computer vision",
+              "Deep learning",
+              "Reinforcement learning",
+              "Robotics"]
+
     def __init__(self, DB_name, NRF_Excel_path, excel_sheet_name, columns_csv, csv_file, table_name, table_columns,
                  url):
         requests.packages.urllib3.disable_warnings()
@@ -37,7 +47,7 @@ class DB_auto_setup:
         if columns is not None:
             data_xls.columns = columns
 
-        data_xls.to_csv('DB.csv', encoding='utf-8', index=False, header=True)
+        data_xls.to_csv('Data/DB.csv', encoding='utf-8', index=False, header=True)
 
     def csv_to_db(self, csv_file, table_name, columns):
         # Creating a connection to the database
@@ -51,10 +61,12 @@ class DB_auto_setup:
         conn.execute(SQL_queries.create_table(table_name, columns))
         df.to_sql(table_name, conn, if_exists="append", index=False)
 
-    def download_from_url(self):
+    @staticmethod
+    def download_from_url(url="https://www.nrf.ac.za/wp-content/uploads/2022/08/Current-Rated-Researchers-"
+                              "22-August-2022.xlsx"):
         try:
             # Download file then save to Data folder, then check if it has changed
-            wget.download(self.url, "c:/users/Mthulisi/downloads/CAPSTONE/CAPSTONE/Data")
+            wget.download(url, "c:/users/Mthulisi/downloads/CAPSTONE/CAPSTONE/Data")
 
         except requests.exceptions.RequestException as e:
             print(e.request + "Could not find the file")
@@ -68,10 +80,18 @@ class DB_auto_setup:
                 # somewhere write to file to save the date permanently
                 if requests.head(self.url, verify=False).status_code == 200:
                     data = rq.urlopen(self.url)
-                    if data.headers['last-modified'] != "Mon, 22 Aug 2022 07:57:10 GMT":
-                        self.download_from_url()
+                    date_and_time = data.headers['last-modified']
+                    if date != self.last_modified:
+                        # We now gave a new last modified value, so we alter the values we have in the file and in the
+                        # last modified variable
+                        self.write_last_modified(date_and_time)
+                        self.set_last_modified()
+
+                        # Download the Excel file then create the NRF database
+                        self.download_from_url(self.url)
                         self.excel_to_csv(self.NRF_Excel_path, self.excel_sheet_name, self.columns_csv)
                         self.csv_to_db(self.csv_file, self.table_name, self.table_columns)
+                        # clean data here
             except requests.exceptions.RequestException as e:
                 print(e.request + "Could not find the file")
             sleep(450)
@@ -95,3 +115,16 @@ class DB_auto_setup:
                 self.last_modified = filestream.readline()
         except:
             print("Unable to open file!")
+
+    @staticmethod
+    def write_last_modified(last_modified):
+        file = open("Data/Last_modified.txt", "w")
+        file.write(last_modified)
+        file.close()
+
+    #
+    def set_up_DB(self, url="https://www.nrf.ac.za/wp-content/uploads/2022/"
+                            "08/Current-Rated-Researchers-22-August-2022.xlsx"):
+        self.download_from_url(url)
+        self.excel_to_csv(self.NRF_Excel_path, self.excel_sheet_name, self.columns_csv)
+        self.csv_to_db(self.csv_file, self.table_name, self.table_columns)
