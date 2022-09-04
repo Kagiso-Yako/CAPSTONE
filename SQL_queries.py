@@ -7,7 +7,7 @@ class SQL_queries:
         return "DROP TABLE IF EXISTS " + str(table_name)
 
     @staticmethod
-    def create_table(table_name, columns: list, primary_key=None):
+    def create_table_compound_key(table_name, columns: list, primary_key=None):
         # Adding columns to query
         query = "CREATE TABLE " + table_name + " ("
         for column in columns:
@@ -26,6 +26,15 @@ class SQL_queries:
             else:
                 if primary_key in columns:
                     query += ", PRIMARY KEY (" + primary_key + ")"
+        return query + ")"
+
+    @staticmethod
+    def create_table(table_name, columns: list):
+        # Adding columns to query
+        query = "CREATE TABLE " + table_name + " ("
+        for column in columns:
+            query += column + " ,"
+        query = query[0: len(query)-1]
         return query + ")"
 
     # Method returning insert query. To be used with a list(s) of field values.
@@ -91,3 +100,21 @@ class SQL_queries:
             condition = conjunction + " NOT " + column + " BETWEEN " + lower_bound + " AND " + upper_bound
 
         return condition
+
+    @staticmethod
+    def count_record(table_name, Distinct=False, columns=None, single_column=""):
+        query = "SELECT COUNT("
+        if Distinct:
+            query += "DISTINCT "
+
+        if columns is not None and not Distinct:
+            for column in columns:
+                query += column + ", "
+            query = query[0: len(query)-2] + ") "
+        elif single_column != "":
+            query += single_column + ") "
+        else:
+            if not Distinct:
+                query += "*) "
+        query += "FROM " + table_name
+        return query
