@@ -9,7 +9,7 @@
 #researchers are based (c) finding interesting trends and patterns over time, (c) appropriate metrics to
 #assess and analyse the community and network structure, and (d) manual update and synchronisation
 #functionality with MAG, the NRF and other public data sources.
-
+import sqlite3
 
 from flask import Flask, render_template
 
@@ -17,6 +17,8 @@ from DB_auto_setup import DB_auto_setup
 
 # Global variables
 # Defines the columns for the csv file and the columns for the NRF researchers table
+from DB_manager import DB_manager
+from SQL_queries import SQL_queries
 
 table_name = "Researchers"
 NRF_Excel_path = "Data/Current-Rated-Researchers-22-August-2022.xlsx"
@@ -33,8 +35,8 @@ columns = ["id INTEGER primary key autoincrement",
            "Rating TEXT",
            "Rating_Start DATE",
            "Rating_Ending DATE",
-           "Prim_Research TEXT",
-           "Sec_Research TEXT",
+           "PrimaryResearch TEXT",
+           "SecondaryResearch TEXT",
            "Specializations TEXT"]
 
 columns_csv = ["Surname",
@@ -44,8 +46,8 @@ columns_csv = ["Surname",
                "Rating",
                "Rating_Start",
                "Rating_Ending",
-               "Prim_Research",
-               "Sec_Research",
+               "PrimaryResearch",
+               "SecondaryResearch",
                "Specializations"]
 
 app = Flask(__name__)
@@ -56,18 +58,58 @@ def index():
 
 @app.route("/researchers")
 def researchers():
-    return render_template("researchers.html")
+    rows = None
+    S_options = None
+    P_options = None
+    Institutions = None
+    Surnames = None
 
+    try:
+        conn = sqlite3.connect(NRF_database_file)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute(SQL_queries.get_table(table_name))
+            rows = cursor.fetchall()
+        except sqlite3.Error:
+            print("Unable to obtain rows")
+
+        try:
+            cursor.execute(SQL_queries.get_table(table_name, single_column="SecondaryResearch", DISTINCT=True))
+            S_options = cursor.fetchall()
+        except sqlite3.Error:
+            print("Unable to obtain secondary research options")
+        try:
+            cursor.execute(SQL_queries.get_table(table_name, single_column="PrimaryResearch", DISTINCT=True))
+            P_options = cursor.fetchall()
+        except sqlite3.Error:
+            print("Unable to obtain primary research options")
+        try:
+            cursor.execute(SQL_queries.get_table(table_name, single_column="Institution", DISTINCT=True))
+            Institutions = cursor.fetchall()
+        except sqlite3.Error:
+            print("Unable to obtain Institutions")
+        try:
+            cursor.execute(SQL_queries.get_table(table_name, single_column="Surname", DISTINCT=True))
+            Surnames = cursor.fetchall()
+        except sqlite3.Error:
+            print("Unable to obtain Surnames")
+
+    except sqlite3.Error:
+        print("Could not connect to database!")
+
+    return render_template("researchers.html", rows=rows, S_options=S_options, P_options=P_options,
+                           Institutions=Institutions, Surnames=Surnames)
+
+
+@app.route("/trendsAndAnalysis")
+def trendsAndAnalysis():
+    return render_template("TrendsAndAnalysis.html")
 
 @app.route("/institutions")
 def institutions():
     return render_template("institutions.html")
-
-
-@app.route("/delete")
-def delete():
-    return render_template("delete.html")
-
 
 @app.route("/universityofcpt")
 def universityofcpt():
@@ -77,5 +119,6 @@ if __name__ == '__main__':
     table = "Researchers"
     auto = DB_auto_setup(NRF_database_file, NRF_Excel_path, excel_sheet_name, columns_csv, csv_file, table_name,
                          columns, url)
-    #auto.set_up_DB(url)
+    manager = DB_manager("Data/Database.db")
+    print(manager.researchers_per_rating())
     app.run(debug=True)

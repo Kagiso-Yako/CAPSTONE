@@ -21,13 +21,11 @@
   <span class="input-group input-group-sm row" >
     <div>
     <label class="form-control col"> Surname
-     <select name="Surname" style="border:0px; float: right;" id="input_surname">
-        <option value="All">All</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">B</option>
-        <option value="P">P</option>
-       <option value="Y">Y</option>
+     <select name="Surname" style="border:0px; float: right;width=150px;" id="input_surname">
+           <option value="All">All</option>
+          {% for option in Surnames %}
+            <option value={{option["Surname"]}} style="width:150px">{{option["Surname"]}}</option>
+          {% endfor %}
       </select>
     </label>
     </div>
@@ -45,41 +43,40 @@
     </div>
     <div>
     <label class="form-control col" > Institution
-      <select name="Institution" style="border:0px; float: right;" id="input_institution">
-        <option value="All">All</option>
-        <option value="University of Cape Town">University of Cape Town</option>
-        <option value="University of Western Cape">University of Western Cape</option>
-        <option value="University of KwaZulu Natal">University of KwaZulu Natal</option>
-        <option value="University of Johannesburg">University of Johannesburg</option>
-        <option value="Rhodes university">Rhodes university</option>
+      <select name="Institution" style="border:0px; float: right;width:150px;" id="input_institution">
+          <option value="All">All</option>
+          {% for option in Institutions %}
+            <option value={{option["Institution"]}} style="width:150px">{{option["Institution"]}}</option>
+          {% endfor %}
       </select>
     </label>
     </div>
     <div>
     <label class="form-control col"> Primary research
-      <select name="Primary research" style="border:0px; float: right;" id="input_Primary" >
-        <option value="All">All</option>
-        <option value="Machine Learning">Q-Learning</option>
-        <option value="Artificial Intelligence">Artificial Intelligence</option>
-        <option value="Deep learning">Deep learning</option>
+      <select name="Primary research" class=wgtmsr" style="border:0px; float: right; width:150px;" id="input_Primary" >
+          <option value="All">All</option>
+          {% for option in S_options %}
+            <option value={{option["SecondaryResearch"]}} style="width:150px">{{option["SecondaryResearch"]}}</option>
+          {% endfor %}
       </select>
     </label>
     </div>
     <div>
     <label class="form-control col"> Secondary research
-      <select name="Secondary research" style="border:0px; float: right;" id="input_Secondary" >
-        <option value="All">All</option>
-        <option value="Machine Learning">Q-Learning</option>
-        <option value="Artificial Intelligence">Artificial Intelligence</option>
-        <option value="Deep learning">Deep learning</option>
+      <select name="Secondary research" class="wgtmsr" style="border:0px; float: right;width:150px;" id="input_Secondary" >
+          <option value="All">All</option>
+          {% for option in S_options %}
+            <option value={{option["SecondaryResearch"]}} style="width:150px">{{option["SecondaryResearch"]}}</option>
+          {% endfor %}
       </select>
     </label>
     </div>
   </span>
 
 
-<table class="table" style="background-color: white">
-        <thead class="thead-dark">
+<table class="table" style="background-color: white; overflow-y:scroll; height:1000px; display:block;"
+        id="ResearchersTable">
+        <thead class="thead-dark" style="position: sticky;">
             <th>ID</th>
             <th>Surname(s)</th>
             <th>Initials</th>
@@ -90,29 +87,18 @@
             <th>Secondary Research</th>
             <th>Specializations)</th>
         </thead>
-        <tr>
-            <td>1</td>
-            <td><a href="/#">J Doe</a></td>
-            <td>J</td>
-            <td>Dr</td>
-            <td> <a href="/universityofcpt">University of Cape Town</a> </td>
-            <td> Y </td>
-            <td> Q learning </td>
-            <td> Artificial intelligence</td>
-            <td>robot swarm</td>
-        </tr>
     {% for row in rows %}
 
         <tr>
-            <td>{{row[0]}}</td>
-            <td>{{row[1]}}</td>
-            <td>{{row[2]}}</td>
-            <td>{{row[3]}}</td>
-            <td>{{row[4]}}</td>
-            <td>{{row[5]}}</td>
-            <td>{{row[6]}}</td>
-            <td>{{row[7]}}</td>
-            <td>{{row[8]}}</td>
+              <td>{{row["id"]}}
+              <td>{{row["surname"]}}</td>
+              <td>{{row["initials"]}}</td>
+              <td>{{row["title"]}}</td>
+              <td>{{row["institution"]}}</td>
+              <td>{{row["rating"]}}</td>
+              <td>{{row["primaryResearch"]}}</td>
+              <td>{{row["secondaryResearch"]}}</td>
+              <td>{{row["Specializations"]}}</td>
 
         </tr>
     {% endfor %}

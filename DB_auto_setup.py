@@ -59,6 +59,7 @@ class DB_auto_setup:
         # Reading csv file, then creating an empty table and appending the csv file data to it
         df = pd.read_csv(csv_file)
         conn.execute(SQL_queries.create_table(table_name, columns))
+        df.drop([0], inplace=True)
         df.to_sql(table_name, conn, if_exists="append", index=False)
 
     @staticmethod
@@ -68,8 +69,8 @@ class DB_auto_setup:
             # Download file then save to Data folder, then check if it has changed
             wget.download(url, "c:/users/Mthulisi/downloads/CAPSTONE/CAPSTONE/Data")
 
-        except requests.exceptions.RequestException as e:
-            print(e.request + "Could not find the file")
+        except requests.exceptions.RequestException:
+            print("Could not find the file")
 
     def update(self):
         while True:
@@ -88,9 +89,7 @@ class DB_auto_setup:
                         self.set_last_modified()
 
                         # Download the Excel file then create the NRF database
-                        self.download_from_url(self.url)
-                        self.excel_to_csv(self.NRF_Excel_path, self.excel_sheet_name, self.columns_csv)
-                        self.csv_to_db(self.csv_file, self.table_name, self.table_columns)
+                        self.set_up_DB(self.url)
                         # clean data here
             except requests.exceptions.RequestException as e:
                 print(e.request + "Could not find the file")

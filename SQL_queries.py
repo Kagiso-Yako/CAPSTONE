@@ -69,7 +69,7 @@ class SQL_queries:
 
     # PLEASE PASS LIST INSTEAD OF STRING
     @staticmethod
-    def get_table(table_name, columns=None, DISTINCT=False):
+    def get_table(table_name, columns=None, single_column="", DISTINCT=False):
         query = "select "
         if DISTINCT:
             query += "DISTINCT "
@@ -78,10 +78,12 @@ class SQL_queries:
             for column in columns:
                 query += column + ","
             query = query[0: len(query) - 1]
+        elif single_column != "":
+            query += single_column
         else:
-            query += " * "
+            query += " *"
 
-        query += "from " + table_name
+        query += " from " + table_name
         return query
 
     @staticmethod
@@ -102,7 +104,7 @@ class SQL_queries:
         return condition
 
     @staticmethod
-    def count_record(table_name, Distinct=False, columns=None, single_column=""):
+    def count_records(table_name, Distinct=False, columns=None, single_column=""):
         query = "SELECT COUNT("
         if Distinct:
             query += "DISTINCT "
@@ -118,3 +120,12 @@ class SQL_queries:
                 query += "*) "
         query += "FROM " + table_name
         return query
+
+    @staticmethod
+    def group_by(column):
+        group_by = "GROUP BY " + column
+        return group_by
+
+    @staticmethod
+    def count(column):
+        return "COUNT (" + column + ")"
