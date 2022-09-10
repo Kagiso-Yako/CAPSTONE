@@ -4,23 +4,23 @@
 
 {% block body %}
 
-<span class="input-group input-group-xs"  >
-  <input type="text" placeholder="Search for institution..." class="form-control">
-  <button>search</button>
-</span>
+  <form class="input-group input-group-xs" action="/inst_search_results" method="GET">
+    <input type="text" placeholder="Search researchers..." class="form-control" name="Institution_search">
+    <input type="submit" value="Search">
+  </form>
 
 <br>
 <br>
 
 <div>
-  <h1 class="text-heading-default font-weight-bold pix-ready" style="text-align: center">Institutions<h1>
+  <h3 class="text-heading-default font-weight-bold pix-ready" style="text-align: center">AI research Institutions of South Africa</h3>
 </div>
 
 <br>
 <br>
 <br>
 
-<span id='inst_dist' style="display: inline-block; height: 500px; width: 1000px" class="row"></span>
+<span id='inst_dist' style="height: 500px; width: 1000px" class="row center"></span>
 <script type='text/javascript'>
    var graphs = {{res_vs_I | safe}};
    Plotly.plot('inst_dist',graphs,{});
@@ -73,9 +73,9 @@
 
     {% for row in rows %}
     <tr>
-      <td>{{row["id"]}}</td>
       <td>{{row["Institution"]}}</td>
       <td>{{row["Location"]}}</td>
+      <td>{{row["NumberofResearchers"]}}</td>
     </tr>
 
     {% endfor %}

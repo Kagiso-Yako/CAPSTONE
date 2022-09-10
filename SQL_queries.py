@@ -166,3 +166,24 @@ class SQL_queries:
     def order_by(column, order=""):
         add_on = " ORDER BY " + column + " " + order
         return add_on
+
+    # Useful for whenever we are dealing with the institutions table
+    @staticmethod
+    def institutions_table():
+        query = "SELECT Institutions.institution , Institutions.location, count(*) as \"NumberofResearchers\" " \
+                "from Institutions INNER JOIN Researchers on Institutions.Institution = Researchers.institution "
+        return query
+
+    @staticmethod
+    def institutions_table_search_query(value):
+        columns = ["Institutions.institution", " Institutions.location"]
+        query = SQL_queries.institutions_table() + " WHERE "
+        skip = 1
+        for i in range(len(columns)):
+            if skip == 1:
+                query += " " + columns[i] + " LIKE " + "\"%" + value + "%\""
+                skip = 0
+            else:
+                query += " OR " + columns[i] + " LIKE " + "\"%" + value + "%\""
+        query += " GROUP BY Institutions.institution "
+        return query

@@ -18,6 +18,7 @@ class Analysis:
             'Researchers': y_axis,
         })
         fig = px.bar(df, y='Institution', x='Researchers',  barmode='group', orientation='h')
+        fig.update_layout(title="Researcher distribution by institution", title_x=0.5)
         graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return graphJSON
 
@@ -29,7 +30,8 @@ class Analysis:
             'Rating': x_axis,
             'Researchers': y_axis,
         })
-        fig = px.bar(df, x='Rating', y='Researchers',  barmode='group')
+        fig = px.bar(df, x='Rating', y='Researchers',  barmode='group', title="Researcher distribution by rating")
+        fig.update_layout(title="Researcher distribution by rating", title_x=0.5)
         fig.update_traces(marker_color='Yellow')
         graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return graphJSON

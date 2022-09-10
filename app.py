@@ -51,6 +51,7 @@ columns_csv = ["Surname",
 
 app = Flask(__name__)
 
+
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
@@ -63,6 +64,7 @@ def researchers():
     P_options = None
     Institutions = None
     Surnames = None
+    rating_dist_JSON = my_JSONs.researchers_per_rating_JSON()
 
     try:
         conn = sqlite3.connect(NRF_database_file)
@@ -101,7 +103,7 @@ def researchers():
     finally:
         if rows is not None:
             return render_template("researchers.html", rows=rows, S_options=S_options, P_options=P_options,
-                               Institutions=Institutions, Surnames=Surnames)
+                                   Institutions=Institutions, Surnames=Surnames, rating_dist=rating_dist_JSON)
         else:
             return render_template("Error_page.html")
 
@@ -109,6 +111,7 @@ def researchers():
 @app.route("/trendsAndAnalysis", methods=["GET", "POST"])
 def trendsAndAnalysis():
     return render_template("TrendsAndAnalysis.html")
+
 
 @app.route("/search_results")
 def search_researchers():
@@ -131,9 +134,35 @@ def search_researchers():
             if rows is not None:
                 if len(rows) > 0:
                     return render_template("search_researchers.html", rows=rows, length=len(rows))
+                else:
+                    return render_template("NoItemsFound.html")
+            else:
+                return render_template("Error_page.html")
 
+@app.route("/inst_search_results")
+def search_Institutions():
+    if request.method == "GET":
+        rows = None
+        try:
+            item = request.args.get("Institution_search")
+            conn = sqlite3.connect(NRF_database_file)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute(SQL_queries.institutions_table_search_query(item))
+            rows = cursor.fetchall()
 
-@app.route("/institutions", methods=["GET", "POST"])
+        except sqlite3.Error:
+            print("sqlite3.Error: Could not execute search.")
+        finally:
+            if rows is not None:
+                if len(rows) > 0:
+                    return render_template("search_institutions.html", rows=rows, length=len(rows))
+                else:
+                    return render_template("NoItemsFound.html")
+            else:
+                return render_template("Error_page.html")
+
+@app.route("/institutions", methods=["GET"])
 def institutions():
     rows = None
     try:
@@ -141,17 +170,15 @@ def institutions():
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         try:
-            cursor.execute(SQL_queries.get_table("Institutions"))
+            cursor.execute(SQL_queries.institutions_table() + " GROUP BY Institutions.institution ")
             rows = cursor.fetchall()
         except sqlite3.Error:
             print("Unable to obtain rows")
     except sqlite3.Error:
         print("Could not connect to database!")
-    if rows is not None:
+    if rows is not None or rows is None:
         res_vs_inst_JSON = my_JSONs.researchers_per_inst_JSON()
         return render_template("institutions.html", res_vs_I=res_vs_inst_JSON, rows=rows)
-    else:
-        return render_template("Error_page.html")
 
 
 @app.route("/inst_<institution>")
@@ -175,7 +202,7 @@ def universityofcpt(institution):
         print("Failed to connect to database for the creation of institution.html")
     if rows is not None:
         return render_template("institution.html", institution_dist=institution_dist, institution=institution,
-                           sum=my_sum, values=values, rows=rows)
+                               sum=my_sum, values=values, rows=rows)
     else:
         return render_template("Error_page.html")
 
