@@ -12,7 +12,8 @@ class DB_manager:
     def researchers_per_inst(self):
         conn = sqlite3.connect(self.DB_name)
         cursor = conn.cursor()
-        cursor.execute("SELECT Institution, count(Institution) FROM Researchers group by institution;")
+        cursor.execute("SELECT Institution, count(Institution) FROM Researchers group by institution " +
+                       "order by count(institution) DESC;")
         count_inst = cursor.fetchall()
         institutions = []
         frequencies = []
@@ -22,16 +23,28 @@ class DB_manager:
         return institutions , frequencies
 
     def researchers_per_rating(self):
+        frequencies = [0, 0, 0, 0, 0]
         ratings = ["A", "B", "C", "P", "Y"]
-        frequencies = []
         conn = sqlite3.connect(self.DB_name)
         cursor = conn.cursor()
+        query = SQL_queries.count_records("Researchers", single_column="Rating")
+        query += SQL_queries.group_by("Rating")
+        cursor.execute(query)
+        values = cursor.fetchall()
+        for i in range(len(values)):
+            frequencies[i] = (values[i][0])
+        return ratings, frequencies
 
-        for rating in ratings:
-            query = SQL_queries.count_records("Researchers", single_column="Rating") + " WHERE "
-            str_rating = "\""+rating+"\""
-            query += SQL_queries.compare_to_other("Rating", str_rating, "=")
-            cursor.execute(query)
-            frequencies.append(cursor.fetchone()[0])
-
+    def researcher_rating_by_inst(self, institution):
+        frequencies = [0, 0, 0, 0, 0]
+        ratings = ["A", "B", "C", "P", "Y"]
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+        query = SQL_queries.count_records("Researchers", single_column="Rating") + " WHERE "
+        query += SQL_queries.compare_to_other("Institution", "\"" + institution + "\"", "=", )
+        query += SQL_queries.group_by("Rating")
+        cursor.execute(query)
+        values = cursor.fetchall()
+        for i in range(len(values)):
+            frequencies[i] = (values[i][0])
         return ratings, frequencies

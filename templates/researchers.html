@@ -3,12 +3,12 @@
 {% block title %} Researchers {% endblock %}
 
 {% block body %}
-
-  <span class="input-group input-group-xs"  >
-    <input type="text" placeholder="Search researchers..." class="form-control">
-    <button>search</button>
-  </span>
-
+<div>
+  <form class="input-group input-group-xs" action="/search_results" method="GET">
+    <input type="text" placeholder="Search researchers..." class="form-control" name="researcher_search">
+    <input type="submit" value="Search">
+  </form>
+</div>
 <br><br>
   <div>
     <h1 class="pix-sliding-headline h3 text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Rated AI</span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated">researchers</span></span> </h1>
@@ -71,26 +71,22 @@
       </select>
     </label>
     </div>
+      <button class = "btn btn-light" style="height: 38px;" onclick="search_researchers()"> Apply Filter </button>
   </span>
-
-
-<table class="table" style="background-color: white; overflow-y:scroll; height:1000px; display:block;"
-        id="ResearchersTable">
-        <thead class="thead-dark" style="position: sticky;">
-            <th>ID</th>
-            <th>Surname(s)</th>
-            <th>Initials</th>
-            <th>Title</th>
-            <th>Institution</th>
-            <th>Rating</th>
-            <th>Primary Research</th>
-            <th>Secondary Research</th>
-            <th>Specializations)</th>
-        </thead>
+<table class="table"  id="ResearchersTable">
+    <thead class="thead-dark" style="position: sticky;">
+        <th>Surname(s)</th>
+        <th>Initials</th>
+        <th>Title</th>
+        <th>Institution</th>
+        <th>Rating</th>
+        <th>Primary Research</th>
+        <th>Secondary Research</th>
+        <th>Specializations)</th>
+    </thead>
     {% for row in rows %}
 
         <tr>
-              <td>{{row["id"]}}
               <td>{{row["surname"]}}</td>
               <td>{{row["initials"]}}</td>
               <td>{{row["title"]}}</td>
@@ -105,16 +101,8 @@
 
 
 </table>
-  <br><br>
-
-
-  <h2>Hi, welcome to the website</h2>
-    <a href="/add">Add Researcher</a><br><br>
-    <a href ="/researchers">Refresh</a><br><br>
-    <a href="/delete">Delete Researcher</a><br><br>
-
-  <a href="/">Go back to home page</a>
-
+<br>
+<br>
 
 </div>
 {% endblock %}

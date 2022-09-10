@@ -90,9 +90,10 @@ class DB_auto_setup:
 
                         # Download the Excel file then create the NRF database
                         self.set_up_DB(self.url)
+                        print("Successfully set up DB!")
                         # clean data here
             except requests.exceptions.RequestException as e:
-                print(e.request + "Could not find the file")
+                print("Could not download NRF excel file, please check your internet connection or the URL.")
             sleep(450)
 
     @staticmethod

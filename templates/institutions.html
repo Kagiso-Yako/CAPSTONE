@@ -4,24 +4,33 @@
 
 {% block body %}
 
-  <span class="input-group input-group-xs"  >
-    <input type="text" placeholder="Search researchers..." class="form-control">
-    <button>search</button>
-  </span>
+<span class="input-group input-group-xs"  >
+  <input type="text" placeholder="Search for institution..." class="form-control">
+  <button>search</button>
+</span>
 
-<br><br>
-  <div>
-    <h1 class="pix-sliding-headline h3 text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Institutions</span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated"></span></span> </h1>
-  </div>
-    <br><br><br>
-    <p class="text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Apply</span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated">filter</span></span> </p>
+<br>
+<br>
 
+<div>
+  <h1 class="text-heading-default font-weight-bold pix-ready" style="text-align: center">Institutions<h1>
+</div>
 
+<br>
+<br>
+<br>
+
+<span id='inst_dist' style="display: inline-block; height: 500px; width: 1000px" class="row"></span>
+<script type='text/javascript'>
+   var graphs = {{res_vs_I | safe}};
+   Plotly.plot('inst_dist',graphs,{});
+</script>
 <div id="content">
+  <p class="text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Apply</span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated">filter</span></span> </p>
   <span class="input-group input-group-sm row" >
     <div>
     <label class="form-control col" > Institution
-      <select name="Institution" style="border:0px; float: right;" id="input_institution">
+      <select name="Institution" style="border:0px;" id="input_institution">
         <option value="All">All</option>
         <option value="University of Cape Town">University of Cape Town</option>
         <option value="University of Western Cape">University of Western Cape</option>
@@ -33,18 +42,18 @@
     </div>
     <div>
     <label class="form-control col">Location
-      <select name="Location" style="border:0px; float: right;" id="input_Location" >
+      <select name="Location" style="border:0px;" id="input_Location" >
         <option value="All">All</option>
         <option value="Western Cape">Western Cape</option>
         <option value="Gauteng">Gauteng</option>
         <option value="North West">North West</option>
-        <option value="Nothern Cape">Northern Cape</option>
+        <option value="Northern Cape">Northern Cape</option>
       </select>
     </label>
     </div>
     <div>
     <label class="form-control col"> Number of rated researchers
-      <select name="Number of rated researchers" style="border:0px; float: right;" id="input_NumOfRes" >
+      <select name="Number of rated researchers" style="border:0px;" id="input_NumOfRes" >
         <option value="All">All</option>
         <option value="Q-Learning">Q-Learning</option>
         <option value="Artificial Intelligence">Artificial Intelligence</option>
@@ -54,38 +63,27 @@
     </div>
   </span>
 
-  <table class="table" style="background-color: white">
-    <thead class="thead-dark">
-      <th>Name</th>
-      <th>Location</th>
-      <th>Number of Researchers</th>
+<table class="table" style="background-color: white; overflow-y:scroll;">
+  <thead class="thead-dark" style="position: sticky;">
+    <th>Name</th>
+    <th>Location</th>
+    <th>Number of Researchers</th>
 
-    </thead>
+  </thead>
 
-      <tr>
-        <td><a href="/universityofcpt">University of Cape Town</a></td>
-        <td>Western Cape</td>
-        <td>200 </td>
-      </tr>
-        
-      {% for row in rows %}
-      <tr>
-        <td>{{row[0]}}</td>
-        <td>{{row[1]}}</td>
-        <td>{{row[2]}}</td>
-      </tr>
-        
-      {% endfor %}  
-  </table>
+    {% for row in rows %}
+    <tr>
+      <td>{{row["id"]}}</td>
+      <td>{{row["Institution"]}}</td>
+      <td>{{row["Location"]}}</td>
+    </tr>
 
-  <br><br>
+    {% endfor %}
+</table>
 
-  <h2>Hi, welcome to the website</h2>
-    <a href="/addInstitution">Add Institution</a><br><br>  
-    <a href ="/institution">List Institutions</a><br><br>  
-    <a href="/deleteInstitution">Delete Institution</a><br><br>
-  <a href="/">Go back to home page</a>  
+<br>
+<br>
 
-  
 </div>
+
 {% endblock %}

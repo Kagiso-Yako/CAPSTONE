@@ -6,50 +6,63 @@
   <div>
     <h1 class="pix-sliding-headline h3 text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">University of </span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Cape Town</span></span> </h1>
   </div>
-<div class="card">
+<div class="card col">
   <section>
     <img src="static/images/UCT_Logo.jpg" style="float:left;" width="650" height="350">
     <article><strong>
-      [Placeholder text for institution involvement overview]<br><br>
-      The University of Cape Town is a research-intensive university located in Cape Town. The institution has 200 researchers, 30 of which are enganged in artificial intelligence research.
-      Of those 30 researchers:<br>
-      7 are A rated <br>
-      6 are B rated <br>
-      5 are C rated <br>
-      6 are P rated <br>
-      and the remaining 5 are Y rated according to the National research foundation (NRF)<br><br>
+      <br><br>
+      The {{institution}} is an institution located in Cape Town. The institution has {{sum}} researchers who are engaged in artificial intelligence research.
+      Of those {{sum}} researchers:<br>
+      {{values[0]}} are A rated <br>
+      {{values[1]}} are B rated <br>
+      {{values[2]}} are C rated <br>
+      {{values[3]}} are P rated <br>
+      and {{values[4]}} are Y rated according to the National research foundation (NRF)<br><br>
       In the AI community the institution (and its researchers) have been actively involved in researching Machine learning, deep learning, reinforcement learning and Computer vision"
     </strong><br>
     </article>
   </section>
 </div>
+<div class="col">
+  <span id='inst_dist' style="width: 500px; height: 500px; display: inline-block;" class="row"></span>
+  <section class= "row" style="display: inline-block">
+    <span id='inst_dist2' style="width: 500px; height: 500px;" class="row"></span>
+  </section>
+  <script type='text/javascript'>
+    var graphs = {{institution_dist | safe}};
+    Plotly.plot('inst_dist',graphs,{});
+  </script>
+  <script type='text/javascript'>
+    var graphs = {{institution_dist2 | safe}};
+    Plotly.plot('inst_dist2',graphs,{});
+  </script>
+</div>
+<br><br><br><br>
 
-    <p class="text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">University Of Cape Town </span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Researchers</span></span> </p>
-
-
-<div class="card">
-  <section>
 <table class="table">
-  <tr class="thead-dark">
+  <thead class="thead-dark">
     <th>Surname(s)</th>
     <th>Title</th>
+    <th>Initials</th>
     <th>Rating</th>
     <th>Institution</th>
     <th>Primary Research</th>
     <th>Secondary Research</th>
-  </tr>
+    <th>Specializations</th>
+  </thead>
 
+  {% for row in rows %}
   <tr>
-    <td><a href="#">John Doe</a></td>
-    <td>Dr</td>
-    <td> Y </td>
-    <td> <a href="/universityofcpt">University of Cape Town</a> </td>
-    <td> Machine learning </td>
-    <td> Deep learning</td>
+    <td>{{row["surname"]}}</td>
+    <td>{{row["initials"]}}</td>
+    <td>{{row["title"]}}</td>
+    <td>{{row["institution"]}}</td>
+    <td>{{row["rating"]}}</td>
+    <td>{{row["primaryResearch"]}}</td>
+    <td>{{row["secondaryResearch"]}}</td>
+    <td>{{row["Specializations"]}}</td>
+  {% endfor %}
   </tr>
 </table>
-
-  </section>
-</div>
 
 {% endblock %}

@@ -12,7 +12,7 @@ class SQL_queries:
         query = "CREATE TABLE " + table_name + " ("
         for column in columns:
             query += column + " ,"
-        query = query[0: len(query)-1]
+        query = query[0: len(query) - 1]
 
         # Adding primary key: Allows for composite key too
         if primary_key is not None:
@@ -34,7 +34,7 @@ class SQL_queries:
         query = "CREATE TABLE " + table_name + " ("
         for column in columns:
             query += column + " ,"
-        query = query[0: len(query)-1]
+        query = query[0: len(query) - 1]
         return query + ")"
 
     # Method returning insert query. To be used with a list(s) of field values.
@@ -63,6 +63,35 @@ class SQL_queries:
         return query
 
     @staticmethod
+    def get_subset(table_name, columns, operators, column_values=None, conjunction="", negate=False, prefix="",
+                   to_one=None, wrap=False):
+        query = SQL_queries.get_table(table_name) + " WHERE"
+        if column_values is not None:
+            skip = 1
+            for i in range(len(columns)):
+                if wrap:
+                    column_values[i] = "\"" + column_values[i] + "\""
+                if skip == 1:
+                    skip = 0
+                    query += SQL_queries.compare_to_other(columns[i], column_values[i], operators[i])
+                else:
+                    query += SQL_queries.compare_to_other(columns[i], column_values[i], operators[i],
+                                                          conjunction=conjunction)
+        elif to_one is not None:
+            skip = 1
+            if wrap:
+                to_one = "\"" + to_one + "\""
+            for i in range(len(columns)):
+                if skip == 1:
+                    skip = 0
+                    query += SQL_queries.compare_to_other(columns[i], to_one, operators[i], negate=negate,
+                                                          prefix=prefix)
+                else:
+                    query += SQL_queries.compare_to_other(columns[i], to_one,
+                                                          operators[i], conjunction="OR", negate=negate, prefix=prefix)
+        return query
+
+    @staticmethod
     def delete_subset(table_name, condition):
         query = "DELETE FROM " + table_name + " WHERE (" + condition + ");"
         return query
@@ -87,11 +116,11 @@ class SQL_queries:
         return query
 
     @staticmethod
-    def compare_to_other(column, column_value, operator, conjunction="", negate=False):
+    def compare_to_other(column, column_value, operator, conjunction="", negate=False, prefix=""):
         if not negate:
-            condition = conjunction + " " + column + " " + operator + " " + str(column_value)
+            condition = " " + prefix + " " + conjunction + " " + column + " " + operator + " " + str(column_value)
         else:
-            condition = conjunction + " " + column + " NOT " + operator + " " + str(column_value)
+            condition = " " + prefix + " " + conjunction + " " + column + " NOT " + operator + " " + str(column_value)
         return condition
 
     @staticmethod
@@ -104,7 +133,7 @@ class SQL_queries:
         return condition
 
     @staticmethod
-    def count_records(table_name, Distinct=False, columns=None, single_column=""):
+    def count_records(table_name, Distinct=False, columns=None, single_column="", other_column=""):
         query = "SELECT COUNT("
         if Distinct:
             query += "DISTINCT "
@@ -112,20 +141,28 @@ class SQL_queries:
         if columns is not None and not Distinct:
             for column in columns:
                 query += column + ", "
-            query = query[0: len(query)-2] + ") "
+            query = query[0: len(query) - 2] + ") "
         elif single_column != "":
             query += single_column + ") "
         else:
             if not Distinct:
                 query += "*) "
+        if other_column != "":
+            query += ", " + other_column + " "
+
         query += "FROM " + table_name
         return query
 
     @staticmethod
     def group_by(column):
-        group_by = "GROUP BY " + column
+        group_by = " GROUP BY " + column
         return group_by
 
     @staticmethod
     def count(column):
         return "COUNT (" + column + ")"
+
+    @staticmethod
+    def order_by(column, order=""):
+        add_on = " ORDER BY " + column + " " + order
+        return add_on
