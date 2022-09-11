@@ -45,6 +45,19 @@ class Analysis:
             'Researchers': y_axis,
         })
         fig = px.bar(df, x='Rating', y='Researchers',  barmode='group')
+        fig.update_layout(title="Institution Researcher distribution by rating", title_x=0.5)
         fig.update_traces(marker_color='Yellow')
         graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return graphJSON, y_axis
+
+    def rating_pie_chart_JSON(self):
+        rating_dist = self.manager.researchers_per_rating()
+        rating_x = rating_dist[0]
+        rating_y = rating_dist[1]
+        df = pd.DataFrame({
+            'Rating': rating_x,
+            'Researchers': rating_y
+        })
+        fig = px.pie(df, values='Researchers', names='Rating',  hole=.3)
+        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return graphJSON

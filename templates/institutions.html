@@ -5,7 +5,7 @@
 {% block body %}
 
   <form class="input-group input-group-xs" action="/inst_search_results" method="GET">
-    <input type="text" placeholder="Search researchers..." class="form-control" name="Institution_search">
+    <input type="text" placeholder="Search institutions..." class="form-control" name="Institution_search">
     <input type="submit" value="Search">
   </form>
 
@@ -73,7 +73,7 @@
 
     {% for row in rows %}
     <tr>
-      <td>{{row["Institution"]}}</td>
+      <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
       <td>{{row["Location"]}}</td>
       <td>{{row["NumberofResearchers"]}}</td>
     </tr>

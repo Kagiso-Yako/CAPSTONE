@@ -3,8 +3,61 @@
 {% block title %} Trends And Analysis {% endblock %}
 
 {% block body %}
-<h2 style="text-align: center">The A.I. community in South Africa </h2>
-<h3>
+<h2 style="text-align: center">The A.I. research community in South Africa </h2>
+<div class="content">
+    <div class="jumbotron">
+        <h4 style="margin: 0px; padding: 0px; text-align: center">Rating distribution</h4>
+        <br>
+        <span id='general_graph' style="height: 400px; width: 600px" class="row center"></span>
+        <script type='text/javascript'>
+            var graphs = {{general | safe}};
+            Plotly.plot('general_graph',graphs,{});
+        </script>
+        <br>
+        <h5 style="text-align: center;"> <u> From the distribution:</u> </h5>
+        <br>
+        <div class="row">
+            <div class="col graph">
+                <h6 style="text-align: center;">Pie chart form:</h6>
+                <span id='ratings_pie_chart' style="height:400px; width: 400px" class="row center"></span>
+                <script type='text/javascript'>
+                    var graphs = {{rating_pie | safe}};
+                    Plotly.plot('ratings_pie_chart',graphs,{});
+                </script>
+            </div>
+            <div class="col center">
+                <h6 style="text-align: center;">Stats here:</h6><br>
+                <p>- There are <b>93</b> NRF rated researchers currently partaking in Artificial intelligence research in South africa.</p>
+                <p >- They are distributed across <b>5</b> categories, and according to the NRF these are: <br>
+                    &emsp; - <b>A</b> – Leading international researchers <br>
+                    &emsp; - <b>B</b> – Internationally acclaimed researchers <br>
+                    &emsp; - <b>C</b> – Established researchers <br>
+                    &emsp; - <b>P</b> – Prestigious Awards <br>
+                    &emsp; - <b>Y</b> – Promising young researchers <br>
+                </p>
+                <p>- Of those <b> 93 </b> researchers: <br>
+                    &emsp; - There are <b>4</b> A-rated researchers (approx 4%)<br>
+                    &emsp; - <b>8</b> B-rated researcher (approx 9%) <br>
+                    &emsp; - <b>62</b> C– Established researchers (approx 67%)<br>
+                    &emsp; - <b>1</b> P-rated researcher (approx 1%)<br>
+                    &emsp; - and <b>18</b> Y-rated researchers<br>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="jumbotron" style="background-color: white">
+        <h4 style="margin: 0px; padding: 0px; text-align: center"> Distribution by institution</h4>
+        <br>
+        <span id='institution_graph' style="height: 500px; width: 1000px" class="row center"></span>
+        <script type='text/javascript'>
+            var graphs = {{institution | safe}};
+            Plotly.plot('institution_graph',graphs,{});
+        </script>
+    </div>
+    <div class="jumbotron"></div>
+    <div class="jumbotron" style="background-color: white"></div>
+    <div class="jumbotron"></div>
+</div>
 
 {%
 endblock %}

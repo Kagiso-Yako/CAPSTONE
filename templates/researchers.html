@@ -94,10 +94,10 @@ Plotly.plot('page_rating_dist',graphs,{});
     {% for row in rows %}
 
         <tr>
-              <td>{{row["surname"]}}</td>
+              <td><a href={{'/inst_'+row["surname"].replace(' ','+')}}>{{row["surname"]}}</a></td>
               <td>{{row["initials"]}}</td>
               <td>{{row["title"]}}</td>
-              <td>{{row["institution"]}}</td>
+              <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
               <td>{{row["rating"]}}</td>
               <td>{{row["primaryResearch"]}}</td>
               <td>{{row["secondaryResearch"]}}</td>

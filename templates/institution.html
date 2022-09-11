@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
-{% block title %} University of Cape Town {% endblock %}
+{% block title %} {{rows[0]["institution"]}} {% endblock %}
 
 {% block body %}
 <br><br>
   <div>
-    <h1 class="pix-sliding-headline h3 text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">University of </span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Cape Town</span></span> </h1>
+    <h2> {{rows[0]["institution"]}} </h2>
   </div>
 <div class="card col">
   <section>
     <img src="static/images/UCT_Logo.jpg" style="float:left;" width="650" height="350">
     <article><strong>
       <br><br>
-      The {{institution}} is an institution located in Cape Town. The institution has {{sum}} researchers who are engaged in artificial intelligence research.
+      The {{rows[0]["institution"]}} is an institution located in . The institution has {{sum}} researchers who are engaged in artificial intelligence research.
       Of those {{sum}} researchers:<br>
       {{values[0]}} are A rated <br>
       {{values[1]}} are B rated <br>
@@ -24,17 +24,11 @@
   </section>
 </div>
 <div class="col">
-  <span id='inst_dist' style="width: 500px; height: 500px; display: inline-block;" class="row"></span>
-  <section class= "row" style="display: inline-block">
-    <span id='inst_dist2' style="width: 500px; height: 500px;" class="row"></span>
-  </section>
+  <span id='inst_dist' style="width: 500px; height: 500px;" class="center"></span>
+
   <script type='text/javascript'>
     var graphs = {{institution_dist | safe}};
     Plotly.plot('inst_dist',graphs,{});
-  </script>
-  <script type='text/javascript'>
-    var graphs = {{institution_dist2 | safe}};
-    Plotly.plot('inst_dist2',graphs,{});
   </script>
 </div>
 <br><br><br><br>
@@ -53,10 +47,10 @@
 
   {% for row in rows %}
   <tr>
-    <td>{{row["surname"]}}</td>
+    <td><a href={{'/inst_'+row["surname"].replace(' ','+')}}>{{row["surname"]}}</a></td>
     <td>{{row["initials"]}}</td>
     <td>{{row["title"]}}</td>
-    <td>{{row["institution"]}}</td>
+    <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
     <td>{{row["rating"]}}</td>
     <td>{{row["primaryResearch"]}}</td>
     <td>{{row["secondaryResearch"]}}</td>

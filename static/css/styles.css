@@ -59,3 +59,8 @@ display:block;;
   margin-right: auto;
   width: 50%;
 }
+
+.bottom_slide {
+    transform: translateY(200px) scaleX(3);
+    opacity: 0;
+}

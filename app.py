@@ -108,9 +108,13 @@ def researchers():
             return render_template("Error_page.html")
 
 
-@app.route("/trendsAndAnalysis", methods=["GET", "POST"])
+@app.route("/trendsAndAnalysis", methods=["GET"])
 def trendsAndAnalysis():
-    return render_template("TrendsAndAnalysis.html")
+    JSON_general = my_JSONs.researchers_per_rating_JSON()
+    JSON_institution = my_JSONs.researchers_per_inst_JSON()
+    ratings_pie_JSON = my_JSONs.rating_pie_chart_JSON()
+    return render_template("TrendsAndAnalysis.html", general=JSON_general, institution=JSON_institution,
+                           rating_pie=ratings_pie_JSON)
 
 
 @app.route("/search_results")
