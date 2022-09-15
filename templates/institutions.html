@@ -20,7 +20,7 @@
 <br>
 <br>
 
-<span id='inst_dist' style="height: 500px; width: 1000px" class="row center"></span>
+<span id='inst_dist' style="height: 600px; width: 1200px" class="row center"></span>
 <script type='text/javascript'>
    var graphs = {{res_vs_I | safe}};
    Plotly.plot('inst_dist',graphs,{});
@@ -31,36 +31,24 @@
     <div>
     <label class="form-control col" > Institution
       <select name="Institution" style="border:0px;" id="input_institution">
-        <option value="All">All</option>
-        <option value="University of Cape Town">University of Cape Town</option>
-        <option value="University of Western Cape">University of Western Cape</option>
-        <option value="University of KwaZulu Natal">University of KwaZulu Natal</option>
-        <option value="University of Johannesburg">University of Johannesburg</option>
-        <option value="Rhodes university">Rhodes university</option>
+          <option value="All">All</option>
+          {% for option in options[0] %}
+            <option value={{option["Institution"]}} style="width:150px">{{option["Institution"]}}</option>
+          {% endfor %}
       </select>
     </label>
     </div>
     <div>
     <label class="form-control col">Location
       <select name="Location" style="border:0px;" id="input_Location" >
-        <option value="All">All</option>
-        <option value="Western Cape">Western Cape</option>
-        <option value="Gauteng">Gauteng</option>
-        <option value="North West">North West</option>
-        <option value="Northern Cape">Northern Cape</option>
+          <option value="All">All</option>
+          {% for option in options[1] %}
+            <option value={{option["Location"]}} style="width:150px">{{option["Location"]}}</option>
+          {% endfor %}
       </select>
     </label>
     </div>
-    <div>
-    <label class="form-control col"> Number of rated researchers
-      <select name="Number of rated researchers" style="border:0px;" id="input_NumOfRes" >
-        <option value="All">All</option>
-        <option value="Q-Learning">Q-Learning</option>
-        <option value="Artificial Intelligence">Artificial Intelligence</option>
-        <option value="Deep learning">Deep learning</option>
-      </select>
-    </label>
-    </div>
+    <button class = "btn btn-light" style="height: 38px;"> Apply Filter </button>
   </span>
 
 <table class="table" style="background-color: white; overflow-y:scroll;">

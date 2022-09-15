@@ -12,18 +12,9 @@ from SQL_queries import SQL_queries
 
 
 class DB_auto_setup:
-    topics = ["Artificial intelligence",
-              "Natural language processing",
-              "Knowledge representation and reasoning",
-              "Search methodologies",
-              "Control methods",
-              "Computer vision",
-              "Deep learning",
-              "Reinforcement learning",
-              "Robotics"]
 
     def __init__(self, DB_name, NRF_Excel_path, excel_sheet_name, columns_csv, csv_file, table_name, table_columns,
-                 url):
+                 url, specializations):
         requests.packages.urllib3.disable_warnings()
         self.DB_name = DB_name
         self.NRF_Excel_path = NRF_Excel_path
@@ -33,8 +24,10 @@ class DB_auto_setup:
         self.table_name = table_name
         self.table_columns = table_columns
         self.url = url
-        # Default date modified
-        self.last_modified = "Mon, 22 Aug 2022 07:57:10 GMT"
+        self.specializations = specializations
+
+        # Default date modified in case can't connect to the internet
+        self.last_modified = ""
         self.set_last_modified()
 
         check_date = Thread(target=self.update)
@@ -52,13 +45,13 @@ class DB_auto_setup:
     def csv_to_db(self, csv_file, table_name, columns):
         # Creating a connection to the database
         conn = sqlite3.connect(self.DB_name)
-
+        cursor = conn.cursor()
         # Deleting the old table to replace with a new one
-        conn.execute(SQL_queries.delete_table(table_name))
+        cursor.execute(SQL_queries.delete_table(table_name))
 
         # Reading csv file, then creating an empty table and appending the csv file data to it
         df = pd.read_csv(csv_file)
-        conn.execute(SQL_queries.create_table(table_name, columns))
+        cursor.execute(SQL_queries.create_table(table_name, columns))
         df.drop([0], inplace=True)
         df.to_sql(table_name, conn, if_exists="append", index=False)
 
@@ -67,7 +60,7 @@ class DB_auto_setup:
                               "22-August-2022.xlsx"):
         try:
             # Download file then save to Data folder, then check if it has changed
-            wget.download(url, "c:/users/Mthulisi/downloads/CAPSTONE/CAPSTONE/Data")
+            wget.download(url, "Data")
 
         except requests.exceptions.RequestException:
             print("Could not find the file")
@@ -92,7 +85,7 @@ class DB_auto_setup:
                         self.set_up_DB(self.url)
                         print("Successfully set up DB!")
                         # clean data here
-            except requests.exceptions.RequestException as e:
+            except:
                 print("Could not download NRF excel file, please check your internet connection or the URL.")
             sleep(450)
 
@@ -122,9 +115,22 @@ class DB_auto_setup:
         file.write(last_modified)
         file.close()
 
-    #
+    def clean_data(self):
+        try:
+            conn = sqlite3.connect(self.DB_name)
+            cursor = conn.cursor()
+            query = SQL_queries.clean_data(self.specializations)
+            cursor.execute(query)
+            conn.commit()
+        except sqlite3.Error:
+            print("Failed to clean data")
+
     def set_up_DB(self, url="https://www.nrf.ac.za/wp-content/uploads/2022/"
                             "08/Current-Rated-Researchers-22-August-2022.xlsx"):
-        self.download_from_url(url)
-        self.excel_to_csv(self.NRF_Excel_path, self.excel_sheet_name, self.columns_csv)
-        self.csv_to_db(self.csv_file, self.table_name, self.table_columns)
+        try:
+            self.download_from_url(url)
+            self.excel_to_csv(self.NRF_Excel_path, self.excel_sheet_name, self.columns_csv)
+            self.csv_to_db(self.csv_file, self.table_name, self.table_columns)
+            self.clean_data()
+        except:
+            print("Could not set up DB!")

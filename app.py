@@ -5,7 +5,7 @@
 # researcher rating system used by the National Research Foundation (NRF) and Microsoft Academic
 # Graph (MAG). A web based interface must be provided for users to perform queries and visualise
 # information about the research community including: a) dominant research areas/topics, publications
-# venues, collaborations (co-authors) and impact (citations) (b) t++in which
+# venues, collaborations (co-authors) and impact (citations) (b) in which
 # researchers are based (c) finding interesting trends and patterns over time, (c) appropriate metrics to
 # assess and analyse the community and network structure, and (d) manual update and synchronisation
 # functionality with MAG, the NRF and other public data sources.
@@ -14,18 +14,31 @@ import sqlite3
 from flask import Flask, render_template, request
 from Analysis import Analysis
 from DB_auto_setup import DB_auto_setup
+from DB_manager import DB_manager
 from SQL_queries import SQL_queries
 
 # Global variables
 # Defines the columns for the csv file and the columns for the NRF researchers table
 
+secondary_options = []
+primary_options = []
+specializations_options = []
 table_name = "Researchers"
 NRF_Excel_path = "Data/Current-Rated-Researchers-22-August-2022.xlsx"
 excel_sheet_name = 'Current Rated Researchers (Webs'
 csv_file = "Data/DB.csv"
 NRF_database_file = "Data/Database.db"
 url = "https://www.nrf.ac.za/wp-content/uploads/2022/08/Current-Rated-Researchers-22-August-2022.xlsx"
-
+specializations = ["Artificial Intelligence",
+                   "Computer vision",
+                   "Natural language processing",
+                   "Artificial Neural Networks",
+                   "Robotics",
+                   "Deep learning",
+                   "Knowledge representation and reasoning",
+                   "Search methodologies",
+                   "Machine learning",
+                   "Reinforcement learning"]
 columns = ["id INTEGER primary key autoincrement",
            "Surname TEXT",
            "Initials TEXT",
@@ -60,12 +73,9 @@ def index():
 @app.route("/researchers", methods=["GET"])
 def researchers():
     rows = None
-    S_options = None
-    P_options = None
-    Institutions = None
-    Surnames = None
     rating_dist_JSON = my_JSONs.researchers_per_rating_JSON()
-
+    options_column = ["Surname", "Institution"]
+    options = []
     try:
         conn = sqlite3.connect(NRF_database_file)
         conn.row_factory = sqlite3.Row
@@ -76,36 +86,37 @@ def researchers():
             rows = cursor.fetchall()
         except sqlite3.Error:
             print("Unable to obtain rows")
-
-        try:
-            cursor.execute(SQL_queries.get_table(table_name, single_column="SecondaryResearch", DISTINCT=True))
-            S_options = cursor.fetchall()
-        except sqlite3.Error:
-            print("Unable to obtain secondary research options")
-        try:
-            cursor.execute(SQL_queries.get_table(table_name, single_column="PrimaryResearch", DISTINCT=True))
-            P_options = cursor.fetchall()
-        except sqlite3.Error:
-            print("Unable to obtain primary research options")
-        try:
-            cursor.execute(SQL_queries.get_table(table_name, single_column="Institution", DISTINCT=True))
-            Institutions = cursor.fetchall()
-        except sqlite3.Error:
-            print("Unable to obtain Institutions")
-        try:
-            cursor.execute(SQL_queries.get_table(table_name, single_column="Surname", DISTINCT=True))
-            Surnames = cursor.fetchall()
-        except sqlite3.Error:
-            print("Unable to obtain Surnames")
-
+        options = fetch_options("Researchers", options_column)
     except sqlite3.Error:
         print("Could not connect to database!")
     finally:
         if rows is not None:
-            return render_template("researchers.html", rows=rows, S_options=S_options, P_options=P_options,
-                                   Institutions=Institutions, Surnames=Surnames, rating_dist=rating_dist_JSON)
+            return render_template("researchers.html", rows=rows, options=options, sec=secondary_options,
+                                   prim=primary_options, spec=specializations_options, rating_dist=rating_dist_JSON)
         else:
             return render_template("Error_page.html")
+
+
+@app.route("/institutions", methods=["GET"])
+def institutions():
+    rows = None
+    options = None
+    conn = sqlite3.connect(NRF_database_file)
+    conn.row_factory = sqlite3.Row
+    try:
+
+        cursor = conn.cursor()
+        options = fetch_options("Institutions", option_columns=["Institution", "Location"])
+        try:
+            cursor.execute(SQL_queries.institutions_table() + " GROUP BY Institutions.institution ")
+            rows = cursor.fetchall()
+        except sqlite3.Error:
+            print("Unable to obtain rows")
+    except sqlite3.Error:
+        print("Could not connect to database!")
+    if rows is not None or rows is None:
+        res_vs_inst_JSON = my_JSONs.researchers_per_inst_JSON()
+        return render_template("institutions.html", res_vs_I=res_vs_inst_JSON, rows=rows, options=options)
 
 
 @app.route("/trendsAndAnalysis", methods=["GET"])
@@ -113,8 +124,15 @@ def trendsAndAnalysis():
     JSON_general = my_JSONs.researchers_per_rating_JSON()
     JSON_institution = my_JSONs.researchers_per_inst_JSON()
     ratings_pie_JSON = my_JSONs.rating_pie_chart_JSON()
+    ratings_per_topic = my_JSONs.researchers_per_topic_JSON("Machine learning")
+    ratings = my_JSONs.get_ratings_list()
+    researchers_per_field = my_JSONs.researchers_per_field_JSON()
+    rating_percentages = []
+    for rating in ratings:
+        rating_percentages.append(round(int(rating)/sum(ratings) * 100))
     return render_template("TrendsAndAnalysis.html", general=JSON_general, institution=JSON_institution,
-                           rating_pie=ratings_pie_JSON)
+                           rating_pie=ratings_pie_JSON, ratings=ratings, rating_p=rating_percentages, sum=sum(ratings),
+                           specialization_dist=researchers_per_field, ratings_per_topic=ratings_per_topic)
 
 
 @app.route("/search_results")
@@ -166,24 +184,6 @@ def search_Institutions():
             else:
                 return render_template("Error_page.html")
 
-@app.route("/institutions", methods=["GET"])
-def institutions():
-    rows = None
-    try:
-        conn = sqlite3.connect(NRF_database_file)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        try:
-            cursor.execute(SQL_queries.institutions_table() + " GROUP BY Institutions.institution ")
-            rows = cursor.fetchall()
-        except sqlite3.Error:
-            print("Unable to obtain rows")
-    except sqlite3.Error:
-        print("Could not connect to database!")
-    if rows is not None or rows is None:
-        res_vs_inst_JSON = my_JSONs.researchers_per_inst_JSON()
-        return render_template("institutions.html", res_vs_I=res_vs_inst_JSON, rows=rows)
-
 
 @app.route("/inst_<institution>")
 def universityofcpt(institution):
@@ -211,9 +211,80 @@ def universityofcpt(institution):
         return render_template("Error_page.html")
 
 
+# *
+# *
+# Supporting methods
+# *
+# *
+
+def fetch_options(table_n, option_columns):
+    conn = sqlite3.connect(NRF_database_file)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    options = []
+    for i in range(len(option_columns)):
+        try:
+            cursor.execute(SQL_queries.get_table(table_n, single_column=option_columns[i], DISTINCT=True))
+            options.append(cursor.fetchall())
+
+        except sqlite3.Error:
+            print("Unable to obtain " + option_columns[i] + "!")
+    return options
+
+def research_fields(column):
+    conn = sqlite3.connect(NRF_database_file)
+    cursor = conn.cursor()
+
+    query = SQL_queries.get_table("Researchers", single_column=column, DISTINCT=True)
+
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    research_options = []
+
+    for item in data:
+        string_fields = str(item[0])
+        fields = string_fields.split(";")
+
+        for option in fields:
+            if option not in research_options:
+
+                research_options.append(option)
+
+    research_options.sort()
+    return research_options
+
+
 if __name__ == '__main__':
-    table = "Researchers"
-    my_JSONs = Analysis()
+    # Creating objects to be used in program
+    my_manager = DB_manager(NRF_database_file, specializations)
+    my_JSONs = Analysis(NRF_database_file, specializations)
     auto = DB_auto_setup(NRF_database_file, NRF_Excel_path, excel_sheet_name, columns_csv, csv_file, table_name,
-                         columns, url)
+                         columns, url, specializations)
+    # ****
+    # ****
+    # ****
+    # Test code: Delete!!!
+    # ****
+    # ****
+    # ****
+
+    auto.set_up_DB()
+
+    # ****
+    # ****
+    # ****
+    # ****
+    # ****
+    # ****
+
+    #  Retrieving options for select boxes and setting them.
+    #  Possibly heavy computation to be done on start up and on update.
+
+    primary_options = research_fields("PrimaryResearch")
+    secondary_options = research_fields("SecondaryResearch")
+    specializations_options = research_fields("Specializations")
+
+    my_manager.researcher_rating_by_inst("University of Cape Town")
+
     app.run(debug=True)

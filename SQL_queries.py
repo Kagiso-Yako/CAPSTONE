@@ -92,8 +92,11 @@ class SQL_queries:
         return query
 
     @staticmethod
-    def delete_subset(table_name, condition):
-        query = "DELETE FROM " + table_name + " WHERE (" + condition + ");"
+    def delete_subset(table_name, condition, negate=False):
+        if negate:
+            query = "DELETE FROM " + table_name + " WHERE NOT (" + condition + ");"
+        else:
+            query = "DELETE FROM " + table_name + " WHERE (" + condition + ");"
         return query
 
     # PLEASE PASS LIST INSTEAD OF STRING
@@ -186,4 +189,15 @@ class SQL_queries:
             else:
                 query += " OR " + columns[i] + " LIKE " + "\"%" + value + "%\""
         query += " GROUP BY Institutions.institution "
+        return query
+
+    @staticmethod
+    def clean_data(specializations):
+        condition = "SecondaryResearch LIKE \"%Artificial Intelligence%\" OR PrimaryResearch " \
+                    "LIKE \"%Artificial Intelligence%\""
+        for spec in specializations:
+            wrapped_spec = "\"%" + spec + "%\""
+            condition += SQL_queries.compare_to_other("Specializations", wrapped_spec, operator="LIKE",
+                                                      conjunction="OR")
+        query = SQL_queries.delete_subset("Researchers", condition, negate=True)
         return query

@@ -6,8 +6,10 @@ import sqlite3
 from SQL_queries import SQL_queries
 
 class DB_manager:
-    def __init__(self, DB_name):
+    def __init__(self, DB_name, specializations):
         self.DB_name = DB_name
+        self.AI_fields = specializations
+        self.AI_fields.sort()
 
     def researchers_per_inst(self):
         conn = sqlite3.connect(self.DB_name)
@@ -47,4 +49,62 @@ class DB_manager:
         values = cursor.fetchall()
         for i in range(len(values)):
             frequencies[i] = (values[i][0])
+
         return ratings, frequencies
+
+    def researchers_per_specialization(self):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+
+        field_X = []
+        num_researchers_Y = []
+
+        for field in self.AI_fields:
+            query = "SELECT Count(Surname) FROM Researchers "
+            query += "WHERE Specializations LIKE  '%" + field + "%';"
+
+            cursor.execute(query)
+            data = cursor.fetchall()
+
+            field_X.append(field)
+            num_researchers_Y.append(data[0][0])
+
+        return field_X, num_researchers_Y
+
+    def researcher_dist_by_specialization(self, field):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+
+        ratings = ["A", "B", "C", "P", "Y"]
+        rating_distribution = []
+        query = "SELECT Count(Rating) FROM Researchers "
+        query += "WHERE Specializations LIKE '%" + field + "%' "
+        query += "GROUP BY Rating"
+
+        cursor.execute(query)
+        data = cursor.fetchall()
+        for i in range(len(data)):
+            rating_distribution.append(data[i][0])
+        print(rating_distribution)
+        return ratings, rating_distribution
+
+    def specialization_dist_by_inst(self, inst):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+
+        specialization_distribution = []
+
+        for field in self.AI_fields:
+            query = "SELECT  Specializations, Count(Specializations) FROM Researchers "
+            query += "WHERE Institution LIKE '%" + inst + "%'  AND specializations LIKE %" + field + "% "
+            query += "GROUP BY Institution"
+
+            cursor.execute(query)
+            data = cursor.fetchall()
+
+            specialization_distribution.append(data)
+
+        return self.AI_fields, specialization_distribution

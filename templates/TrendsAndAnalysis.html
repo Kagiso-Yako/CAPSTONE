@@ -26,8 +26,8 @@
                 </script>
             </div>
             <div class="col center">
-                <h6 style="text-align: center;">Stats here:</h6><br>
-                <p>- There are <b>93</b> NRF rated researchers currently partaking in Artificial intelligence research in South africa.</p>
+                <h6 style="text-align: center;">Chart analysis:</h6><br>
+                <p>- There are <b>{{sum}}</b> NRF rated researchers currently partaking in Artificial intelligence research in South africa.</p>
                 <p >- They are distributed across <b>5</b> categories, and according to the NRF these are: <br>
                     &emsp; - <b>A</b> – Leading international researchers <br>
                     &emsp; - <b>B</b> – Internationally acclaimed researchers <br>
@@ -35,12 +35,16 @@
                     &emsp; - <b>P</b> – Prestigious Awards <br>
                     &emsp; - <b>Y</b> – Promising young researchers <br>
                 </p>
-                <p>- Of those <b> 93 </b> researchers: <br>
-                    &emsp; - There are <b>4</b> A-rated researchers (approx 4%)<br>
-                    &emsp; - <b>8</b> B-rated researcher (approx 9%) <br>
-                    &emsp; - <b>62</b> C– Established researchers (approx 67%)<br>
-                    &emsp; - <b>1</b> P-rated researcher (approx 1%)<br>
-                    &emsp; - and <b>18</b> Y-rated researchers<br>
+                <p>- Of those <b> {{sum}} </b> researchers: <br>
+                    &emsp; - There are <b>{{ratings[0]}}</b> A-rated researchers (approx {{rating_p[0]}}%)<br>
+                    &emsp; - <b>{{ratings[1]}}</b> B-rated researcher (approx {{rating_p[1]}}%) <br>
+                    &emsp; - <b>{{ratings[2]}}</b> C– rated researchers (approx {{rating_p[2]}}%)<br>
+                    &emsp; - <b>{{ratings[3]}}</b> P-rated researchers (approx {{rating_p[3]}}%)<br>
+                    &emsp; - and <b>{{ratings[4]}}</b> Y-rated researchers (approx {{rating_p[4]}}%)<br>
+                </p>
+                <p>
+                    - The majority of researchers lie within the <b>C</b> category, representing approx <b>67%</b> of the researchers.<br>
+                    - The least represented category is the <b>P</b> category with <b>1</b> researcher(s) approx <b>1%</b> of the researchers.
                 </p>
             </div>
         </div>
@@ -54,9 +58,31 @@
             Plotly.plot('institution_graph',graphs,{});
         </script>
     </div>
+    <div class="jumbotron">
+        <span id='spec_graph' style="height: 500px; width: 1000px" class="row center"></span>
+        <script type='text/javascript'>
+            var graphs = {{specialization_dist | safe}};
+            Plotly.plot('spec_graph',graphs,{});
+        </script>
+    </div>
+    <div class="jumbotron" style="background-color: white">
+         <label class="form-control col"> Rating
+         <select name="Rating" style="border:0px; float: right; width: 150px" id="input_rating">
+            <option value="A">Artificial intelligence</option>
+            <option value="B">Control methods</option>
+            <option value="C">Artificial neural networks</option>
+            <option value="P">Deep learning</option>
+           <option value="Y">Machine learning</option>
+          </select>
+         </label>
+        <span id='topic_graph' style="height: 500px; width: 1000px" class="row center"></span>
+        <script type='text/javascript'>
+            var graphs = {{ratings_per_topic | safe}};
+            Plotly.plot('topic_graph',graphs,{});
+        </script>
+    </div>
     <div class="jumbotron"></div>
-    <div class="jumbotron" style="background-color: white"></div>
-    <div class="jumbotron"></div>
+
 </div>
 
 {%

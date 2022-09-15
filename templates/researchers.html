@@ -13,7 +13,7 @@
   <div>
 <h3 style="text-align: center">NRF Rated Artificial intelligence Researchers Of South Africa</h3>
   </div>
-<span id='page_rating_dist' style="width: 500px; height: 500px;" class="center"></span>
+<span id='page_rating_dist' style="width: 800px; height: 600px;" class="center"></span>
 
     <br><br><br>
     <p class="text-heading-default font-weight-bold pix-ready"><span class="slide-in-container"><span class="d-inline-block text-heading-default animated">Apply</span></span> <span class="slide-in-container"><span class="d-inline-block text-heading-default animated">filter</span></span> </p>
@@ -30,7 +30,7 @@ Plotly.plot('page_rating_dist',graphs,{});
     <label class="form-control col"> Surname
      <select name="Surname" style="border:0px; float: right;width=150px;" id="input_surname">
            <option value="All">All</option>
-          {% for option in Surnames %}
+          {% for option in options[0] %}
             <option value={{option["Surname"]}} style="width:150px">{{option["Surname"]}}</option>
           {% endfor %}
       </select>
@@ -52,7 +52,7 @@ Plotly.plot('page_rating_dist',graphs,{});
     <label class="form-control col" > Institution
       <select name="Institution" style="border:0px; float: right;width:150px;" id="input_institution">
           <option value="All">All</option>
-          {% for option in Institutions %}
+          {% for option in options[1] %}
             <option value={{option["Institution"]}} style="width:150px">{{option["Institution"]}}</option>
           {% endfor %}
       </select>
@@ -62,8 +62,8 @@ Plotly.plot('page_rating_dist',graphs,{});
     <label class="form-control col"> Primary research
       <select name="Primary research" class=wgtmsr" style="border:0px; float: right; width:150px;" id="input_Primary" >
           <option value="All">All</option>
-          {% for option in S_options %}
-            <option value={{option["SecondaryResearch"]}} style="width:150px">{{option["SecondaryResearch"]}}</option>
+          {% for option in prim %}
+            <option value={{option}} style="width:150px">{{option}}</option>
           {% endfor %}
       </select>
     </label>
@@ -72,13 +72,23 @@ Plotly.plot('page_rating_dist',graphs,{});
     <label class="form-control col"> Secondary research
       <select name="Secondary research" class="wgtmsr" style="border:0px; float: right;width:150px;" id="input_Secondary" >
           <option value="All">All</option>
-          {% for option in S_options %}
-            <option value={{option["SecondaryResearch"]}} style="width:150px">{{option["SecondaryResearch"]}}</option>
+          {% for option in sec %}
+            <option value={{option}} style="width:150px">{{option}}</option>
           {% endfor %}
       </select>
     </label>
     </div>
-      <button class = "btn btn-light" style="height: 38px;" onclick="search_researchers()"> Apply Filter </button>
+      <div>
+    <label class="form-control col"> Specializations
+      <select name="Specializations" class="wgtmsr" style="border:0px; float: right;width:150px;" id="input_Specializations" >
+          <option value="All">All</option>
+          {% for option in spec %}
+            <option value={{option}} style="width:150px">{{option}}</option>
+          {% endfor %}
+      </select>
+    </label>
+    </div>
+      <button class = "btn btn-light" style="height: 38px;"> Apply Filter </button>
   </span>
 <table class="table"  id="ResearchersTable">
     <thead class="thead-dark" style="position: sticky;">
