@@ -82,14 +82,12 @@ class Analysis:
 
     def researchers_per_topic_JSON(self, topic):
         rating, frequency = self.manager.researcher_dist_by_specialization(topic)
-        print(rating)
-        print(frequency)
         df = pd.DataFrame({
             'Rating': rating,
             'Number of researchers': frequency,
         })
         fig = px.bar(df, x='Rating', y='Number of researchers',  barmode='group')
-        fig.update_layout(title="Researcher Rating distribution by topic", title_x=0.5)
+        fig.update_layout(title="Researcher Rating distribution by topic: " + topic, title_x=0.5)
         fig.update_traces(marker_color='Purple')
         graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return graphJSON

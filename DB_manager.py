@@ -78,7 +78,7 @@ class DB_manager:
         cursor = conn.cursor()
 
         ratings = ["A", "B", "C", "P", "Y"]
-        rating_distribution = []
+        rating_distribution = [0] * len(ratings)
         query = "SELECT Count(Rating) FROM Researchers "
         query += "WHERE Specializations LIKE '%" + field + "%' "
         query += "GROUP BY Rating"
@@ -86,8 +86,7 @@ class DB_manager:
         cursor.execute(query)
         data = cursor.fetchall()
         for i in range(len(data)):
-            rating_distribution.append(data[i][0])
-        print(rating_distribution)
+            rating_distribution[i] = data[i][0]
         return ratings, rating_distribution
 
     def specialization_dist_by_inst(self, inst):

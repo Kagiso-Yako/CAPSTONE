@@ -118,21 +118,40 @@ def institutions():
         res_vs_inst_JSON = my_JSONs.researchers_per_inst_JSON()
         return render_template("institutions.html", res_vs_I=res_vs_inst_JSON, rows=rows, options=options)
 
+@app.route("/callback_topics_data", methods=["GET"])
+def topics_data():
+    field = request.args.get('data')
+    return my_JSONs.researchers_per_topic_JSON(field)
 
 @app.route("/trendsAndAnalysis", methods=["GET"])
 def trendsAndAnalysis():
     JSON_general = my_JSONs.researchers_per_rating_JSON()
     JSON_institution = my_JSONs.researchers_per_inst_JSON()
     ratings_pie_JSON = my_JSONs.rating_pie_chart_JSON()
-    ratings_per_topic = my_JSONs.researchers_per_topic_JSON("Machine learning")
+    ratings_per_topic = my_JSONs.researchers_per_topic_JSON("Artificial intelligence")
     ratings = my_JSONs.get_ratings_list()
     researchers_per_field = my_JSONs.researchers_per_field_JSON()
     rating_percentages = []
     for rating in ratings:
         rating_percentages.append(round(int(rating)/sum(ratings) * 100))
+    maxi = round(max(ratings)/sum(ratings) * 100)
+    mini = round(min(ratings)/sum(ratings) * 100)
+    rating_categories = ["A", "B", "C", "P", "Y"]
+    min_rating = rating_categories[ratings.index(min(ratings))]
+    max_rating = rating_categories[ratings.index(max(ratings))]
+    rows = None
+    conn = sqlite3.connect(NRF_database_file)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    try:
+        cursor.execute(SQL_queries.get_table(table_name))
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        print("Unable to obtain rows")
     return render_template("TrendsAndAnalysis.html", general=JSON_general, institution=JSON_institution,
                            rating_pie=ratings_pie_JSON, ratings=ratings, rating_p=rating_percentages, sum=sum(ratings),
-                           specialization_dist=researchers_per_field, ratings_per_topic=ratings_per_topic)
+                           specialization_dist=researchers_per_field, ratings_per_topic=ratings_per_topic, max=maxi,
+                           min=mini, min_r=min_rating, max_r=max_rating, rows=rows)
 
 
 @app.route("/search_results")
@@ -191,7 +210,6 @@ def universityofcpt(institution):
     institution_dist, values = my_JSONs.researcher_rating_by_inst_JSON(institution)
     my_sum = 0
     rows = None
-    print(institution)
     try:
         conn = sqlite3.connect(NRF_database_file)
         conn.row_factory = sqlite3.Row

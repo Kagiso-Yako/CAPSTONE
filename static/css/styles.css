@@ -48,9 +48,9 @@ th {
 
 table{
 background-color: white;
-overflow-y:scroll;
-max-height:1000px;
-display:block;;
+overflow-y: scroll;
+max-height: 1000px;
+display: block;;
 }
 
 .center {

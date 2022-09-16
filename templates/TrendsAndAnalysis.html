@@ -43,8 +43,8 @@
                     &emsp; - and <b>{{ratings[4]}}</b> Y-rated researchers (approx {{rating_p[4]}}%)<br>
                 </p>
                 <p>
-                    - The majority of researchers lie within the <b>C</b> category, representing approx <b>67%</b> of the researchers.<br>
-                    - The least represented category is the <b>P</b> category with <b>1</b> researcher(s) approx <b>1%</b> of the researchers.
+                    - The majority of researchers lie within the <b>{{max_r}}</b> category, representing approx <b>{{max}}%</b> of the researchers.<br>
+                    - The least represented category is the <b>{{min_r}}</b> category with <b>1</b> researcher(s) approx <b>{{min}}%</b> of the researchers.
                 </p>
             </div>
         </div>
@@ -65,24 +65,59 @@
             Plotly.plot('spec_graph',graphs,{});
         </script>
     </div>
-    <div class="jumbotron" style="background-color: white">
+    <div class="row">
+    <div class="jumbotron col" style="background-color: white; width: 500px; float: right; ">
          <label class="form-control col"> Rating
-         <select name="Rating" style="border:0px; float: right; width: 150px" id="input_rating">
-            <option value="A">Artificial intelligence</option>
-            <option value="B">Control methods</option>
-            <option value="C">Artificial neural networks</option>
-            <option value="P">Deep learning</option>
-           <option value="Y">Machine learning</option>
+         <select name="Rating" style="border:0px; text-align: center; width: 500px" id="input_rating" onchange="topic_callback(this.value); filter(7, this.value,
+          this.id)" onload="filter(7, this.value, this.id)">
+            <option value="Artificial intelligence">Artificial intelligence</option>
+            <option value="Control methods">Control methods</option>
+            <option value="Artificial neural networks">Artificial neural networks</option>
+            <option value="Deep learning">Deep learning</option>
+           <option value="Machine learning">Machine learning</option>
+             <option value="Robotics">Robotics</option>
+            <option value="Computer vision">Computer vision</option>
+            <option value="Knowledge representation and reasoning">Knowledge representation and reasoning</option>
+            <option value="Search methodologies">Search methodologies</option>
+           <option value="Reinforcement learning">Reinforcement learning</option>
           </select>
          </label>
-        <span id='topic_graph' style="height: 500px; width: 1000px" class="row center"></span>
+        <span id='topic_graph' style="height: 500px; width: 1000px; align: center;" class="center"></span>
         <script type='text/javascript'>
             var graphs = {{ratings_per_topic | safe}};
-            Plotly.plot('topic_graph',graphs,{});
+            Plotly.newPlot('topic_graph',graphs,{});
         </script>
+<table class="table"  id="ResearchersTable" style="height: 400px; width: 1000px; align: center;">
+        <thead class="thead-dark" style="position: sticky;">
+            <th>Surname(s)</th>
+            <th>Initials</th>
+            <th>Title</th>
+            <th>Institution</th>
+            <th>Rating</th>
+            <th>Primary Research</th>
+            <th>Secondary Research</th>
+            <th>Specializations)</th>
+        </thead>
+
+        {% for row in rows %}
+        <tr>
+              <td><a href={{'/inst_'+row["surname"].replace(' ','+')}}>{{row["surname"]}}</a></td>
+              <td>{{row["initials"]}}</td>
+              <td>{{row["title"]}}</td>
+              <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
+              <td>{{row["rating"]}}</td>
+              <td>{{row["primaryResearch"]}}</td>
+              <td>{{row["secondaryResearch"]}}</td>
+              <td>{{row["Specializations"]}}</td>
+
+        </tr>
+        {% endfor %}
+</table>
+    </div>
+    <div class="col">
+    </div>
     </div>
     <div class="jumbotron"></div>
-
 </div>
 
 {%
