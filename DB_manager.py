@@ -147,6 +147,168 @@ class DB_manager:
 
         return institutions
 
+    ############
+    
+    def specialization_dist_by_top_inst(self, field):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+    
+        institution = ["University of Cape Town",
+                           "University of the Witwatersrand",
+                    "University of Pretoria",
+                    "University of KwaZulu-Natal",
+                    "Stellenbosch University"]
+    
+        #topic = []
+        #specialization_distriution = []
+    
+        institution_frequency = {}
+    
+        institutions = []
+        frequency = []
+    
+        query = "SELECT  Institution, Count(Institution) FROM Researchers "
+        query += "WHERE Institution = 'University of Cape Town' AND Specializations LIKE '%" + field + "%' "
+        query += "OR Institution = 'University of the Witwatersrand' AND Specializations LIKE '%" + field + "%' "
+        query += "OR Institution = 'University of Pretoria'AND Specializations LIKE '%" + field + "%' "
+        query += "OR Institution = 'University of KwaZulu-Natal' AND Specializations LIKE '%" + field + "%' "
+        query += "OR Institution = 'Stellenbosch University' AND Specializations LIKE '%" + field + "%' "
+        query += "GROUP BY Institution"
+    
+        #print(query)
+        cursor.execute(query)
+        data = cursor.fetchall()
+    
+        #print(field)
+        #print_data(data)
+    
+        for item in (data):
+            institutions.append(item[0])
+            frequency.append(item[1])
+    
+        for i in institution:
+            if i not in institutions:
+                institutions.append(i)
+                frequency.append(0)
+    
+        for i in range(len(institutions)):
+            institution_frequency[institutions[i]] = frequency[i]
+    
+        institutions = institution
+    
+        for i in range(len(institutions)):
+            frequency[i] = institution_frequency[institutions[i]]
+    
+    
+        return institutions, frequency
+
+    
+    def researcher_dist_by_top_inst(self, institution):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+    
+        #inst = []
+        #researcher_distribution = []
+    
+        rating = ["A", "B", "C", "P", "Y"]
+    
+        ratings = []
+        frequency = []
+    
+    
+    
+        query = "SELECT Rating, Count(Rating) FROM Researchers "
+        query += "WHERE Institution = '" + institution + "' "
+        query += "GROUP BY Rating;"
+    
+        #print(query)
+        cursor.execute(query)
+        data = cursor.fetchall()
+    
+        rating_frequency = {}
+    
+        for item in (data):
+            ratings.append(item[0])
+            frequency.append(item[1])
+    
+        for i in rating:
+            if i not in ratings:
+                ratings.append(i)
+                frequency.append(0)
+    
+        for i in range(len(ratings)):
+            rating_frequency[ratings[i]] = frequency[i]
+    
+        ratings.sort()
+    
+        for i in range(len(ratings)):
+            frequency[i] = rating_frequency[ratings[i]]
+    
+    
+        return  ratings, frequency
+
+    
+    def researchers_per_top_inst(self):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+
+        institutions = []
+        frequency = []
+
+        query = "SELECT Institution, Count(Institution) FROM Researchers "
+        query += "WHERE Institution = 'University of Cape Town' "
+        query += "OR Institution = 'University of the Witwatersrand' "
+        query += "OR Institution = 'University of Pretoria' "
+        query += "OR Institution = 'University of KwaZulu-Natal' "
+        query += "OR Institution = 'Stellenbosch University' "
+        query += "GROUP BY Institution;"
+
+        #print(query)
+        cursor.execute(query)
+        data = cursor.fetchall()
+        
+        #print_data(data)
+
+        for item in (data):
+            institutions.append(item[0])
+            frequency.append(item[1])
+
+        return  institutions, frequency
+
+
+    def primary_research_dist_by_top_inst(self):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+
+        primary = []
+        frequency = []
+
+        query = "SELECT PrimaryResearch, Count(PrimaryResearch) FROM Researchers "
+        query += "WHERE Institution = 'University of Cape Town' AND PrimaryResearch IS NOT NULL "
+        query += "OR Institution = 'University of the Witwatersrand' AND PrimaryResearch IS NOT NULL "
+        query += "OR Institution = 'University of Pretoria' AND PrimaryResearch IS NOT NULL "
+        query += "OR Institution = 'University of KwaZulu-Natal' AND PrimaryResearch IS NOT NULL "
+        query += "OR Institution = 'Stellenbosch University' AND PrimaryResearch IS NOT NULL  "
+        query += "GROUP BY PrimaryResearch;"
+
+        #print(query)
+        cursor.execute(query)
+        data = cursor.fetchall()
+        
+        #print_data(data)
+
+        for item in (data):
+            primary.append(item[0])
+            frequency.append(item[1])
+
+        return  primary, frequency
+    
+    ##########
+
     # ai_topics is an array of different AI topics, ["Artificial Intelligence", "Machine Learning", "Deep learning",..]
     def clean_data(self, ai_topics):
 
