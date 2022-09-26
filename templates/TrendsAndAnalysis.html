@@ -149,8 +149,109 @@
     <div class="col" id="Complex queries on top 5">
     </div>
     </div>
+
+</div>
+<div class="col">
+</div>
+</div>
+<div class="jumbotron"></div>
+
+
+
+<!------------------->
+
+<div class="row">
+    <div class="jumbotron col" style="background-color: rgb(134, 88, 88); width: 500px; float: right; ">
+         <label class="form-control col"> Institution
+         <select name="Spec_inst" style="border:0px; text-align: center; width: 500px" id="input_spec" onchange="specializations_callback(this.value); filter(7, this.value,
+          this.id)" onload="filter(7, this.value, this.id)">
+            <option value="Artificial intelligence">Artificial intelligence</option>
+            <option value="Control methods">Control methods</option>
+            <option value="Artificial neural networks">Artificial neural networks</option>
+            <option value="Deep learning">Deep learning</option>
+           <option value="Machine learning">Machine learning</option>
+             <option value="Robotics">Robotics</option>
+            <option value="Computer vision">Computer vision</option>
+            <option value="Knowledge representation and reasoning">Knowledge representation and reasoning</option>
+            <option value="Search methodologies">Search methodologies</option>
+           <option value="Reinforcement learning">Reinforcement learning</option>
+          </select>
+         </label>
+        <span id='topic_inst_graph' style="height: 500px; width: 1000px; align: center;" class="center"></span>
+        <script type='text/javascript'>
+            var graphs = {{specializations_per_inst | safe}};
+            Plotly.newPlot('topic_inst_graph',graphs,{});
+        </script>
+    </div>
+</div>
+
+<div class="col">
+</div>
+</div>
+<div class="jumbotron"></div>
+
+<div class="row">
+    <div class="jumbotron col" style="background-color: white; width: 500px; float: right; ">
+         <label class="form-control col"> Institution
+         <select name="Rating_inst" style="border:0px; text-align: center; width: 500px" id="input_rating_inst" onchange="institutions_callback(this.value); filter(3, this.value,
+          this.id)" onload="filter(3, this.value, this.id)">
+            <option value="University of Cape Town">University of Cape Town</option>
+            <option value="University of the Witwatersrand">University of the Witwatersrand</option>
+            <option value="University of Pretoria">University of Pretoria</option>
+            <option value="University of KwaZulu-Natal">University of KwaZulu-Natal</option>
+            <option value="Stellenbosch University">Stellenbosch University</option>
+          </select>
+         </label>
+        <span id='topic_rating_inst_graph' style="height: 500px; width: 1000px; align: center;" class="center"></span>
+        <script type='text/javascript'>
+            var graphs = {{ratings_per_inst | safe}};
+            Plotly.newPlot('topic_rating_inst_graph',graphs,{});
+        </script>
+    </div>
+</div>
+
+
+<div class="col">
+</div>
+</div>
+<div class="jumbotron"></div>
+
+<div class="jumbotron" style="background-color: white">
+    <h4 style="margin: 0px; padding: 0px; text-align: center"> Distribution by top institutions</h4>
+    <br>
+    <span id='top_institution_graph' style="height: 500px; width: 1000px" class="row center"></span>
+    <script type='text/javascript'>
+        var graphs = {{researchers_per_inst | safe}};
+        Plotly.plot('top_institution_graph',graphs,{});
+    </script>
+</div>
+
+<div class="col">
+</div>
+</div>
+<div class="jumbotron"></div>
+
+<div class="jumbotron" style="background-color: white">
+    <h4 style="margin: 0px; padding: 0px; text-align: center"> Distribution by top institutions</h4>
+    <br>
+    <span id='primary_graph' style="height: 500px; width: 1000px" class="row center"></span>
+    <script type='text/javascript'>
+        var graphs = {{researchers_per_primary | safe}};
+        Plotly.plot('primary_graph',graphs,{});
+    </script>
+</div>
+
+
+<div class="col">
+</div>
+</div>
+<div class="jumbotron"></div>
+
+
+</div>
     
 </div>
+
 <div class="jumbotron footer" style="text-align:center;background-color: #DDDDEE;">
     <p style="margin: 15px; ">
         University of Cape Town, csc3003s: Capstone 2022: AI-WEB <strong>(Group 2)</strong><br><br>
