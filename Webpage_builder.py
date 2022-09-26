@@ -31,6 +31,11 @@ class Webpage_builder:
                            "Search methodologies",
                            "Machine learning",
                            "Reinforcement learning"]
+        top_institutions = ["University of Cape Town",
+                            "University of the Witwatersrand",
+                            "University of Pretoria",
+                            "University of KwaZulu-Natal",
+                            "Stellenbosch University"]
         self.columns = ["id INTEGER primary key autoincrement",
                    "Surname TEXT",
                    "Initials TEXT",
@@ -107,7 +112,7 @@ class Webpage_builder:
         finally:
             if rows is not None:
                 return render_template("researchers.html", rows=rows, options=options, sec=self.secondary_options,
-                                       prim=self.primary_options, spec=self.specializations_options,
+                                       prim=self.primary_options, spec=self.specializations_options,inst=self.institution_options, surn=self.researcher_options,
                                        rating_dist=rating_dist_JSON)
             else:
                 return render_template("Error_page.html")
@@ -141,6 +146,22 @@ class Webpage_builder:
         ratings_per_topic = self.my_JSONs.researchers_per_topic_JSON("Artificial intelligence")
         ratings = self.my_JSONs.get_ratings_list()
         researchers_per_field = self.my_JSONs.researchers_per_field_JSON()
+
+        # top institutions graphs
+        # "Researcher Instittuion distribution by topic: "
+        specializations_per_inst = self.my_JSONs.specialization_top_inst_JSON("Artificial intelligence")
+ 
+        # "Researcher distribution by institution: "
+        ratings_per_inst = self.my_JSONs.rating_top_inst_JSON("University of Cape Town")
+
+        # "Researcher distribution by top institution"
+        researchers_per_inst = self.my_JSONs.researchers_per_top_inst_JSON()
+
+        # "Researcher distribution by primary research"
+        researchers_per_primary = self.my_JSONs.primary_research_top_inst_JSON()
+
+
+
         rating_percentages = []
         for rating in ratings:
             rating_percentages.append(round(int(rating) / sum(ratings) * 100))
@@ -161,8 +182,10 @@ class Webpage_builder:
         return render_template("TrendsAndAnalysis.html", general=JSON_general, institution=JSON_institution,
                                rating_pie=ratings_pie_JSON, ratings=ratings, rating_p=rating_percentages,
                                sum=sum(ratings), prev_JSON=JSON_general_prev,
-                               specialization_dist=researchers_per_field, ratings_per_topic=ratings_per_topic, max=maxi,
-                               min=mini, min_r=min_rating, max_r=max_rating, rows=rows, institutions=institutions[0:10])
+                               specialization_dist=researchers_per_field, ratings_per_topic=ratings_per_topic,
+                               specializations_per_inst=specializations_per_inst, ratings_per_inst=ratings_per_inst,
+                               researchers_per_inst=researchers_per_inst, researchers_per_primary=researchers_per_primary,
+                               max=maxi,min=mini, min_r=min_rating, max_r=max_rating, rows=rows, institutions=institutions[0:10])
 
     def publications_page(self):
         if request.method == "POST":
@@ -303,6 +326,14 @@ class Webpage_builder:
     def graph_callback(self):
         field = request.args.get('data')
         return self.my_JSONs.researchers_per_topic_JSON(field)
+    
+    def graph2_callback(self):
+        field = request.args.get('data')
+        return self.my_JSONs.specialization_top_inst_JSON(field)
+
+    def graph3_callback(self):
+        institution = request.args.get('data')
+        return self.my_JSONs.rating_top_inst_JSON(institution)
 
     def fetch_options(self, table_n , option_columns):
         conn = sqlite3.connect(self.NRF_database_file)
