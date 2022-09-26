@@ -30,18 +30,18 @@ Plotly.plot('page_rating_dist',graphs,{});
   <span class="input-group input-group-sm row" >
     <div>
     <label class="form-control col"> Surname
-     <select name="Surname" style="border:0px; float: right;width=150px;" id="input_surname" onchange="filter(0, this.value, this.id)">
-           <option value="">--</option>
-          {% for option in options[0] %}
-            <option value={{option["Surname"]}} style="width:150px">{{option["Surname"]}}</option>
-          {% endfor %}
+     <select name="Surname" class="filter" style="border:0px; float: right;width=150px;" id="input_surname">
+        <option value="0">--</option>
+        {% for option in surn %}
+          <option value={{option}} style="width:150px">{{option}}</option>
+        {% endfor %}
       </select>
     </label>
     </div>
     <div>
     <label class="form-control col"> Rating
-     <select name="Rating" style="border:0px; float: right;" id="input_rating" onchange="filter(4, this.value, this.id)">
-        <option value="">--</option>
+     <select name="Rating" class="filter" style="border:0px; float: right;" id="input_rating">
+        <option value="0">--</option>
         <option value="A">A</option>
         <option value="B">B</option>
         <option value="C">C</option>
@@ -52,41 +52,40 @@ Plotly.plot('page_rating_dist',graphs,{});
     </div>
     <div>
     <label class="form-control col" > Institution
-      <select name="Institution" style="border:0px; float: right;width:150px;" id="input_institution" onchange="filter(3, this.value, this.id)">
-          <option value="">--</option>
-          {% for option in options[1] %}
-            <option value={{option["Institution"]}} style="width:150px">{{option["Institution"]}}</option>
+      <select name="Institution" class="filter" style="border:0px; float: right;width:150px;" id="input_institution">
+          <option value="0">--</option>
+          {% for option in inst %}
+            <option value="{{option}}" style="width:150px">{{option}}</option>
           {% endfor %}
       </select>
     </label>
     </div>
     <div>
     <label class="form-control col"> Primary research
-      <select name="Primary research" class=wgtmsr" style="border:0px; float: right; width:150px;" id="input_Primary" onchange="filter(5, this.value, this.id)">
-          <option value="">--</option>
+      <select name="Primary research" class="filter" class=wgtmsr" style="border:0px; float: right; width:150px;" id="input_Primary">
+          <option value="0">--</option>
           {% for option in prim %}
-            <option value={{option}} style="width:150px">{{option}}</option>
+            <option value="{{option}}" style="width:150px">{{option}}</option>
           {% endfor %}
       </select>
     </label>
     </div>
     <div>
     <label class="form-control col"> Secondary research
-      <select name="Secondary research" class="wgtmsr" style="border:0px; float: right;width:150px;" id="input_Secondary" onchange="filter(6, this.value, this.id)">
-          <option value="">--</option>
+      <select name="Secondary research" class="filter" class="wgtmsr" style="border:0px; float: right;width:150px;" id="input_Secondary">
+          <option value="0">--</option>
           {% for option in sec %}
-            <option value={{option}} style="width:150px">{{option}}</option>
+            <option value="{{option}}" style="width:150px">{{option}}</option>
           {% endfor %}
       </select>
     </label>
     </div>
       <div>
     <label class="form-control col"> Specializations
-      <select name="Specializations" class="wgtmsr" style="border:0px; float: right;width:150px;" id="input_Specializations"
-              onchange="filter(7, this.value, this.id)">
-          <option value="">--</option>
+      <select name="Specializations" class="filter" class="wgtmsr" style="border:0px; float: right;width:150px;" id="input_Specializations">
+          <option value="0">--</option>
           {% for option in spec %}
-            <option value={{option}} style="width:150px">{{option}}</option>
+            <option value="{{option}}" style="width:150px">{{option}}</option>
           {% endfor %}
       </select>
     </label>
@@ -94,26 +93,32 @@ Plotly.plot('page_rating_dist',graphs,{});
   </span>
 <table class="table"  id="ResearchersTable">
     <thead class="thead-dark" style="position: sticky;">
+      <tr>
         <th>Surname(s)</th>
-        <th>Initials</th>
+        <th>Initials)</th>
         <th>Title</th>
         <th>Institution</th>
         <th>Rating</th>
         <th>Primary Research</th>
         <th>Secondary Research</th>
-        <th>Specializations)</th>
+        <th>Specializations</th>
+      </tr>
     </thead>
     {% for row in rows %}
 
         <tr>
-              <td><a href={{'/researcher_'+row["id"]|string}}>{{row["surname"]}}</a></td>
-              <td>{{row["initials"]}}</td>
-              <td>{{row["title"]}}</td>
-              <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
-              <td>{{row["rating"]}}</td>
-              <td>{{row["primaryResearch"]}}</td>
-              <td>{{row["secondaryResearch"]}}</td>
-              <td>{{row["Specializations"]}}</td>
+              <tbody>
+
+              <td class="surname"><a href={{'/researcher_'+row["surname"]}}>{{row["surname"]}}</a></td>
+              <td class="initials">{{row["initials"]}}</td>
+              <td class="title">{{row["title"]}}</td>
+              <td class="institution"><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
+              <td class="rating">{{row["rating"]}}</td>
+              <td class="primaryResearch">{{row["primaryResearch"]}}</td>
+              <td class="secondaryResearch">{{row["secondaryResearch"]}}</td>
+              <td class="Specializations">{{row["Specializations"]}}</td>
+
+              </tbody>
 
         </tr>
     {% endfor %}
@@ -124,6 +129,9 @@ Plotly.plot('page_rating_dist',graphs,{});
 <br>
 
 </div>
+
+<script src="/static/js/filter.js"></script>
+
 {% endblock %}
 
 
