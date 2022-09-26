@@ -6,25 +6,28 @@
   <div>
     <h2> {{rows[0]["institution"]}} </h2>
   </div>
-<div class="card col">
-  <section>
-    <img src="static/images/UCT_Logo.jpg" style="float:left;" width="650" height="350">
-    <article><strong>
+
+<div class="card">
+  <section class="row">
+    <span style="float: left;">
+    <img src="{{logo_image}}" style="float:left; margin: 50px" width="450" height="300">
+    </span>
+    <span style="width: 600px; margin: 20px">
+    <strong>
       <br><br>
-      The {{rows[0]["institution"]}} is an institution located in . The institution has {{sum}} researchers who are engaged in artificial intelligence research.
+      The {{rows[0]["institution"]}} is a research intensive institution located in {{rows[0]["location"]}}. The institution has {{sum}} researchers who are engaged in artificial intelligence research.
       Of those {{sum}} researchers:<br>
       {{values[0]}} : A rated <br>
       {{values[1]}} : B rated <br>
       {{values[2]}} : C rated <br>
       {{values[3]}} : P rated <br>
       and {{values[4]}} : Y rated, according to the National research foundation (NRF)<br><br>
-      In the AI community the institution (and its researchers) have been actively involved in researching Machine learning, deep learning, reinforcement learning and Computer vision"
-    </strong><br>
-    </article>
+   </strong><br>
+    </span>
   </section>
 </div>
 <div class="col">
-  <span id='inst_dist' style="width: 500px; height: 500px;" class="center"></span>
+  <span id='inst_dist' style="width: 800px; height: 600px;" class="center"></span>
 
   <script type='text/javascript'>
     var graphs = {{institution_dist | safe}};
@@ -34,7 +37,7 @@
 <br><br><br><br>
 
 <table class="table">
-  <thead class="thead-dark">
+  <thead class="thead-dark" style="position: sticky;">
     <th>Surname(s)</th>
     <th>Title</th>
     <th>Initials</th>
@@ -47,7 +50,7 @@
 
   {% for row in rows %}
   <tr>
-    <td><a href={{'/inst_'+row["surname"].replace(' ','+')}}>{{row["surname"]}}</a></td>
+    <td><a href={{'/researcher_'+row["id"]|string}}>{{row["surname"]}}</a></td>
     <td>{{row["initials"]}}</td>
     <td>{{row["title"]}}</td>
     <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>

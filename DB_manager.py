@@ -5,6 +5,7 @@
 import sqlite3
 from SQL_queries import SQL_queries
 
+
 class DB_manager:
     def __init__(self, DB_name, specializations):
         self.DB_name = DB_name
@@ -22,19 +23,20 @@ class DB_manager:
         for i in range(len(count_inst)):
             institutions.append(count_inst[i][0])
             frequencies.append(count_inst[i][1])
-        return institutions , frequencies
+        return institutions, frequencies
 
-    def researchers_per_rating(self):
+    def researchers_per_rating(self, table="Researchers"):
         frequencies = [0, 0, 0, 0, 0]
         ratings = ["A", "B", "C", "P", "Y"]
         conn = sqlite3.connect(self.DB_name)
         cursor = conn.cursor()
-        query = SQL_queries.count_records("Researchers", single_column="Rating")
+        query = SQL_queries.get_table(table, columns=["Rating", "count(rating)"])
         query += SQL_queries.group_by("Rating")
         cursor.execute(query)
         values = cursor.fetchall()
-        for i in range(len(values)):
-            frequencies[i] = (values[i][0])
+        for i in range(len(ratings)):
+            if values[i][0] is not None:
+                frequencies[ratings.index(values[i][0])] = (values[i][1])
         return ratings, frequencies
 
     def researcher_rating_by_inst(self, institution):
@@ -42,13 +44,14 @@ class DB_manager:
         ratings = ["A", "B", "C", "P", "Y"]
         conn = sqlite3.connect(self.DB_name)
         cursor = conn.cursor()
-        query = SQL_queries.count_records("Researchers", single_column="Rating") + " WHERE "
+        query = "SELECT rating, count(rating) from researchers WHERE "
         query += SQL_queries.compare_to_other("Institution", "\"" + institution + "\"", "=", )
         query += SQL_queries.group_by("Rating")
         cursor.execute(query)
         values = cursor.fetchall()
+        print(values)
         for i in range(len(values)):
-            frequencies[i] = (values[i][0])
+            frequencies[ratings.index(values[i][0])] = (values[i][1])
 
         return ratings, frequencies
 
@@ -79,14 +82,14 @@ class DB_manager:
 
         ratings = ["A", "B", "C", "P", "Y"]
         rating_distribution = [0] * len(ratings)
-        query = "SELECT Count(Rating) FROM Researchers "
+        query = "SELECT rating ,Count(Rating) FROM Researchers "
         query += "WHERE Specializations LIKE '%" + field + "%' "
         query += "GROUP BY Rating"
 
         cursor.execute(query)
         data = cursor.fetchall()
         for i in range(len(data)):
-            rating_distribution[i] = data[i][0]
+            rating_distribution[ratings.index(data[i][0])] = data[i][1]
         return ratings, rating_distribution
 
     def specialization_dist_by_inst(self, inst):
@@ -107,3 +110,82 @@ class DB_manager:
             specialization_distribution.append(data)
 
         return self.AI_fields, specialization_distribution
+
+    def get_researchers(self):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+
+        query = "SELECT Surname FROM Researchers"
+
+        cursor.execute(query)
+        data = cursor.fetchall()
+
+        researchers = []
+
+        for item in data:
+            surname = str(item[0])
+            researchers.append(surname)
+
+        return researchers
+
+    def get_institutions(self):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+
+        query = "SELECT DISTINCT Institution FROM Researchers"
+
+        cursor.execute(query)
+        data = cursor.fetchall()
+
+        institutions = []
+
+        for item in data:
+            surname = str(item[0])
+            institutions.append(surname)
+
+        return institutions
+
+    # ai_topics is an array of different AI topics, ["Artificial Intelligence", "Machine Learning", "Deep learning",..]
+    def clean_data(self, ai_topics):
+
+        conn = sqlite3.connect(self.DB_name)
+        cursor = conn.cursor()
+
+        query = "DELETE FROM Researchers"
+
+        specializations = " WHERE "
+        primary = " AND "
+        secondary = " AND "
+
+        for index in range(len(ai_topics)):
+
+            if index == len(ai_topics) - 1:
+
+                specializations += "Specializations NOT LIKE '%" + ai_topics[index] + "%'"
+                primary += "PrimaryResearch NOT LIKE '%" + ai_topics[index] + "%'"
+                secondary += "SecondaryResearch NOT LIKE '%" + ai_topics[index] + "%'"
+
+            else:
+
+                specializations += "Specializations NOT LIKE '%" + ai_topics[index] + "%' AND "
+                primary += "PrimaryResearch NOT LIKE '%" + ai_topics[index] + "%' AND "
+                secondary += "SecondaryResearch NOT LIKE '%" + ai_topics[index] + "%' AND "
+
+        query += specializations
+        query += primary
+        query += secondary
+
+        query += " OR Specializations IS NULL "
+        query += " OR PrimaryResearch IS NULL "
+        query += " OR SecondaryResearch IS NULL"
+
+        # print(query)
+        cursor.execute(query)
+
+        query2 = "SELECT * FROM Researchers"
+        cursor.execute(query2)
+        new_data = cursor.fetchall()
+
+        return new_data  # returns a new table after the cleaning the data

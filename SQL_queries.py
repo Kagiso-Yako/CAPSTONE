@@ -200,4 +200,7 @@ class SQL_queries:
             condition += SQL_queries.compare_to_other("Specializations", wrapped_spec, operator="LIKE",
                                                       conjunction="OR")
         query = SQL_queries.delete_subset("Researchers", condition, negate=True)
+        query = query[0:len(query)-1] + " or (SecondaryResearch is NULL or Specializations is NULL)"
         return query
+
+

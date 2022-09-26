@@ -3,6 +3,8 @@
 {% block title %} Researchers {% endblock %}
 
 {% block body %}
+<br>
+<br>
 <div>
   <form class="input-group input-group-xs" action="/search_results" method="GET">
     <input type="text" placeholder="Search researchers..." class="form-control" name="researcher_search">
@@ -89,7 +91,6 @@ Plotly.plot('page_rating_dist',graphs,{});
       </select>
     </label>
     </div>
-      <button class = "btn btn-light" style="height: 38px;"> Clear Filter </button>
   </span>
 <table class="table"  id="ResearchersTable">
     <thead class="thead-dark" style="position: sticky;">
@@ -105,7 +106,7 @@ Plotly.plot('page_rating_dist',graphs,{});
     {% for row in rows %}
 
         <tr>
-              <td><a href={{'/inst_'+row["surname"].replace(' ','+')}}>{{row["surname"]}}</a></td>
+              <td><a href={{'/researcher_'+row["id"]|string}}>{{row["surname"]}}</a></td>
               <td>{{row["initials"]}}</td>
               <td>{{row["title"]}}</td>
               <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>

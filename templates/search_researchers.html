@@ -20,10 +20,10 @@
     {% for row in rows %}
 
         <tr>
-              <td>{{row["surname"]}}</td>
+              <td><a href={{'/researcher_'+row["id"]|string}}>{{row["surname"]}}</a></td>
               <td>{{row["initials"]}}</td>
               <td>{{row["title"]}}</td>
-              <td>{{row["institution"]}}</td>
+              <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
               <td>{{row["rating"]}}</td>
               <td>{{row["primaryResearch"]}}</td>
               <td>{{row["secondaryResearch"]}}</td>

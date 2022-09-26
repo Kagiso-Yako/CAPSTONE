@@ -17,7 +17,7 @@
 
     {% for row in rows %}
     <tr>
-      <td>{{row["Institution"]}}</td>
+      <td><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
       <td>{{row["Location"]}}</td>
       <td>{{row["NumberofResearchers"]}}</td>
     </tr>

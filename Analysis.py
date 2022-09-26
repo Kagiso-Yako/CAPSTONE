@@ -1,3 +1,7 @@
+# class Analysis:
+#     def __init__(self, DB_name):
+#         self.DB_name = DB_name
+
 #Class supplying a list of graph JSON files for each page.
 from DB_manager import DB_manager
 import plotly.express as px
@@ -91,3 +95,4 @@ class Analysis:
         fig.update_traces(marker_color='Purple')
         graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return graphJSON
+0
