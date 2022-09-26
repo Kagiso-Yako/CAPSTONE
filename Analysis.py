@@ -95,4 +95,54 @@ class Analysis:
         fig.update_traces(marker_color='Purple')
         graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         return graphJSON
+    
+    #############    
+
+    def specialization_top_inst_JSON(self, topic):
+        institution, frequency = self.manager.specialization_dist_by_top_inst(topic)
+        df = pd.DataFrame({
+            'Institution': institution,
+            'Number of researchers': frequency,
+        })
+        fig = px.bar(df, x='Institution', y='Number of researchers',  barmode='group')
+        fig.update_layout(title="Researcher Instituion distribution by topic: " + topic, title_x=0.5)
+        fig.update_traces(marker_color='Purple')
+        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return graphJSON
+    
+    def rating_top_inst_JSON(self, institution):
+        ratings, frequency = self.manager.researcher_dist_by_top_inst(institution)
+        df = pd.DataFrame({
+            'Rating': ratings,
+            'Number of researchers': frequency,
+        })
+        fig = px.bar(df, x='Rating', y='Number of researchers',  barmode='group')
+        fig.update_layout(title="Researcher distribution by institution: " + institution, title_x=0.5)
+        fig.update_traces(marker_color='Purple')
+        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return graphJSON
+    
+    def researchers_per_top_inst_JSON(self):
+        institution, frequency = self.manager.researchers_per_top_inst()
+        df = pd.DataFrame({
+            'Institution': institution,
+            'Number of researchers': frequency,
+        })
+        fig = px.bar(df, x='Institution', y='Number of researchers',  barmode='group')
+        fig.update_layout(title="Researcher distribution by top institution", title_x=0.5)
+        fig.update_traces(marker_color='Purple')
+        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return graphJSON
+    
+    def primary_research_top_inst_JSON(self):
+        primary, frequency = self.manager.primary_research_dist_by_top_inst()
+        df = pd.DataFrame({
+            'Primary Research': primary,
+            'Number of researchers': frequency,
+        })
+        fig = px.bar(df, x='Number of researchers', y='Primary Research',  barmode='group')
+        fig.update_layout(title="Researcher distribution by primary research", title_x=0.5)
+        fig.update_traces(marker_color='Purple')
+        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return graphJSON
 0
