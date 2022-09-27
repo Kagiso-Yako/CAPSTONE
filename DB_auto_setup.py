@@ -93,6 +93,14 @@ class DB_auto_setup:
         query = "ALTER TABLE Researchers RENAME To PreviousResearchers;"
         cursor.execute(query)
         conn.commit()
+        try:
+            conn = sqlite3.connect(self.DB_name)
+            cursor = conn.cursor()
+            query = SQL_queries.clean_data(self.specializations, table="PreviousResearchers")
+            cursor.execute(query)
+            conn.commit()
+        except sqlite3.Error:
+            print("Failed to clean data")
 
     def set_last_modified(self):
         try:
@@ -161,12 +169,12 @@ class DB_auto_setup:
         except:
             print("Could not create DB table from csv file")
 
-
     #
     #
     #  Internet related methods.
     #
     #
+
     @staticmethod
     def download_from_url(url):
         try:
@@ -175,8 +183,6 @@ class DB_auto_setup:
 
         except requests.exceptions.RequestException:
             print("Could not find the file")
-
-
 
     @staticmethod
     def build_url():
@@ -190,5 +196,4 @@ class DB_auto_setup:
               year_num + "/" + month_num + "/Current-Rated-Researchers-" + \
               day_num + "-" + month_name + "-" + year_num + ".xlsx"
         return url
-
 

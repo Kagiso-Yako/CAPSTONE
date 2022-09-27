@@ -192,15 +192,13 @@ class SQL_queries:
         return query
 
     @staticmethod
-    def clean_data(specializations):
+    def clean_data(specializations, table="Researchers"):
         condition = "SecondaryResearch LIKE \"%Artificial Intelligence%\" OR PrimaryResearch " \
                     "LIKE \"%Artificial Intelligence%\""
         for spec in specializations:
             wrapped_spec = "\"%" + spec + "%\""
             condition += SQL_queries.compare_to_other("Specializations", wrapped_spec, operator="LIKE",
                                                       conjunction="OR")
-        query = SQL_queries.delete_subset("Researchers", condition, negate=True)
+        query = SQL_queries.delete_subset(table, condition, negate=True)
         query = query[0:len(query)-1] + " or (SecondaryResearch is NULL or Specializations is NULL)"
         return query
-
-
