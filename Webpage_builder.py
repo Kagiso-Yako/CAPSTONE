@@ -376,3 +376,5 @@ class Webpage_builder:
         self.primary_options = self.research_fields("PrimaryResearch")
         self.secondary_options = self.research_fields("SecondaryResearch")
         self.specializations_options = self.research_fields("Specializations")
+        self.institution_options = self.my_manager.get_institutions()
+        self.researcher_options = self.my_manager.get_researchers()
