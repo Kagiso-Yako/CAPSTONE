@@ -21,7 +21,7 @@ class Webpage_builder:
         excel_sheet_name = 'Current Rated Researchers (Webs'
         csv_file = "Data/DB.csv"
         self.NRF_database_file = "Data/Database.db"
-        self.specializations = ["Artificial Intelligence",
+        specializations = ["Artificial Intelligence",
                            "Computer vision",
                            "Natural language processing",
                            "Artificial Neural Networks",
@@ -30,8 +30,7 @@ class Webpage_builder:
                            "Knowledge representation and reasoning",
                            "Search methodologies",
                            "Machine learning",
-                           "Reinforcement learning",
-                            "Machine intelligence"]
+                           "Reinforcement learning"]
         self.columns = ["id INTEGER primary key autoincrement",
                    "Surname TEXT",
                    "Initials TEXT",
@@ -56,10 +55,11 @@ class Webpage_builder:
                        "Specializations"]
 
         self.auto = DB_auto_setup(self.NRF_database_file, excel_sheet_name, self.columns_csv, csv_file,
-                                  self.table_name, self.columns, specializations=self.specializations)
+                                  self.table_name, self.columns, specializations=specializations)
 
-        self.my_manager = DB_manager(self.NRF_database_file, self.specializations)
-        self.my_JSONs = Analysis(self.NRF_database_file, self.specializations)
+        self.my_manager = DB_manager(self.NRF_database_file, specializations)
+        self.my_JSONs = Analysis(self.NRF_database_file, specializations)
+
         self.populate_options()
     #
     #
@@ -162,8 +162,7 @@ class Webpage_builder:
                                rating_pie=ratings_pie_JSON, ratings=ratings, rating_p=rating_percentages,
                                sum=sum(ratings), prev_JSON=JSON_general_prev,
                                specialization_dist=researchers_per_field, ratings_per_topic=ratings_per_topic, max=maxi,
-                               min=mini, min_r=min_rating, max_r=max_rating, rows=rows, institutions=institutions[0:10],
-                               num_inst=len(institutions), topics=self.specializations)
+                               min=mini, min_r=min_rating, max_r=max_rating, rows=rows, institutions=institutions[0:10])
 
     def publications_page(self):
         if request.method == "POST":
@@ -214,10 +213,13 @@ class Webpage_builder:
             cursor.execute(query)
             rows = cursor.fetchall()
             prim = rows[0]["PrimaryResearch"].split(";")
+            print(prim)
             sec = rows[0]["SecondaryResearch"].split(";")
             spec = rows[0]["Specializations"].split(";")
             institution = rows[0]["Institution"].replace('+', ' ')
             logo_image = "static/images/" + institution + ".png"
+            print(logo_image)
+            print(spec)
         except sqlite3.Error:
             print("Failed to connect to database for the creation of researcher.html")
         if len(rows) != 0:
@@ -314,8 +316,6 @@ class Webpage_builder:
 
             except sqlite3.Error:
                 print("Unable to obtain " + option_columns[i] + " options!")
-        list(dict.fromkeys(options))
-        print(options)
         return options
 
     def research_fields(self, research_type):
@@ -334,8 +334,8 @@ class Webpage_builder:
             fields = string_fields.split(";")
 
             for option in fields:
-                if option.strip().lower() not in research_options:
-                    research_options.append(option.strip().lower())
+                if option not in research_options:
+                    research_options.append(option)
 
         research_options.sort()
 

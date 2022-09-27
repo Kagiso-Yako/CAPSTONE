@@ -22,6 +22,34 @@
         });
         }
     </script>
+    
+    <script>
+        function specializations_callback(topic){
+        $.getJSON({ url:"/callback_specializations_data", data: {'data': topic}, success: function (result)
+            {
+                Plotly.newPlot('topic_inst_graph',result,{});
+
+            }
+        });
+        }
+     </script>
+
+     <script>
+        function institutions_callback(institution){
+        $.getJSON({ url:"/callback_institutions_data", data: {'data': institution}, success: function (result)
+            {
+                Plotly.newPlot('topic_rating_inst_graph',result,{});
+
+            }
+        });
+        }
+      </script>
+
+      <script 
+      src="https://code.jquery.com/jquery-3.6.1.min.js"
+      integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
+      crossorigin="anonymous">
+      </script>
 </head>
 <body>
     <div id="mySidenav" class="sidenav" >
