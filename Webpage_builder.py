@@ -378,3 +378,4 @@ class Webpage_builder:
         self.specializations_options = self.research_fields("Specializations")
         self.institution_options = self.my_manager.get_institutions()
         self.researcher_options = self.my_manager.get_researchers()
+        
