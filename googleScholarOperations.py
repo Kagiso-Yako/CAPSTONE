@@ -29,7 +29,7 @@ def query_url(query):
     headers = {}
     response = None
     try:
-        response = requests.request("GET", url, headers=headers, data=payload)
+        respon0se = requests.request("GET", url, headers=headers, data=payload)
     except:
         print("Can't contact Google Scholar")
     # print(response.text)
@@ -39,11 +39,12 @@ def query_url(query):
 def handle_query(querytype,query):
     try:
         query=validate_enrich_query(querytype,query)
-        results = literal_eval(query_url(query).text)
+        results = literal_eval(query_url(query).
+                               text)
         print(querytype)
         m = f"<table> <caption>Search Results</caption><th>Number</th><th>Title of the Paper</th><th>Author</th> <th>Institution</th>"
         # print(len(response['response']['docs']))
-        r = 1;
+        r = 1
         for searchResult in results['organic_results']:
             title = str(searchResult['title'])
             authors=" "

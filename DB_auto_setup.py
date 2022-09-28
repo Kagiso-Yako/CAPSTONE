@@ -196,4 +196,3 @@ class DB_auto_setup:
               year_num + "/" + month_num + "/Current-Rated-Researchers-" + \
               day_num + "-" + month_name + "-" + year_num + ".xlsx"
         return url
-

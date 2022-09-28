@@ -148,206 +148,49 @@ class DB_manager:
         return institutions
 
     ############
-    
-    def specialization_dist_by_top_inst(self, field):
 
+    def primary_research_dist_by_top_inst(self, primary):
         conn = sqlite3.connect(self.DB_name)
         cursor = conn.cursor()
-    
-        institution = ["University of Cape Town",
-                           "University of the Witwatersrand",
-                    "University of Pretoria",
-                    "University of KwaZulu-Natal",
-                    "Stellenbosch University"]
-    
-        #topic = []
-        #specialization_distriution = []
-    
-        institution_frequency = {}
-    
-        institutions = []
         frequency = []
-    
-        query = "SELECT  Institution, Count(Institution) FROM Researchers "
-        query += "WHERE Institution = 'University of Cape Town' AND Specializations LIKE '%" + field + "%' "
-        query += "OR Institution = 'University of the Witwatersrand' AND Specializations LIKE '%" + field + "%' "
-        query += "OR Institution = 'University of Pretoria'AND Specializations LIKE '%" + field + "%' "
-        query += "OR Institution = 'University of KwaZulu-Natal' AND Specializations LIKE '%" + field + "%' "
-        query += "OR Institution = 'Stellenbosch University' AND Specializations LIKE '%" + field + "%' "
-        query += "GROUP BY Institution"
-    
-        #print(query)
-        cursor.execute(query)
-        data = cursor.fetchall()
-    
-        #print(field)
-        #print_data(data)
-    
-        for item in (data):
-            institutions.append(item[0])
-            frequency.append(item[1])
-    
-        for i in institution:
-            if i not in institutions:
-                institutions.append(i)
-                frequency.append(0)
-    
-        for i in range(len(institutions)):
-            institution_frequency[institutions[i]] = frequency[i]
-    
-        institutions = institution
-    
-        for i in range(len(institutions)):
-            frequency[i] = institution_frequency[institutions[i]]
-    
-    
-        return institutions, frequency
+        for primaryResearch in primary:
+            query = "SELECT Count(PrimaryResearch) as frequency FROM Researchers WHERE Institution in " \
+                    "(SELECT institution from researchers group by institution order by count(*) desc limit 5) " \
+                    "and primaryresearch LIKE \"%" + primaryResearch + "%\";"
+            cursor.execute(query)
+            frequency.append(cursor.fetchone()[0])
 
-    
-    def researcher_dist_by_top_inst(self, institution):
+        return frequency
 
+    def pie_chart_top_5_vs_rest(self):
         conn = sqlite3.connect(self.DB_name)
         cursor = conn.cursor()
-    
-        #inst = []
-        #researcher_distribution = []
-    
-        rating = ["A", "B", "C", "P", "Y"]
-    
-        ratings = []
-        frequency = []
-    
-    
-    
-        query = "SELECT Rating, Count(Rating) FROM Researchers "
-        query += "WHERE Institution = '" + institution + "' "
-        query += "GROUP BY Rating;"
-    
-        #print(query)
-        cursor.execute(query)
-        data = cursor.fetchall()
-    
-        rating_frequency = {}
-    
-        for item in (data):
-            ratings.append(item[0])
-            frequency.append(item[1])
-    
-        for i in rating:
-            if i not in ratings:
-                ratings.append(i)
-                frequency.append(0)
-    
-        for i in range(len(ratings)):
-            rating_frequency[ratings[i]] = frequency[i]
-    
-        ratings.sort()
-    
-        for i in range(len(ratings)):
-            frequency[i] = rating_frequency[ratings[i]]
-    
-    
-        return  ratings, frequency
+        distribution = []
+        cursor.execute("select count(*) from Researchers group by Institution in "
+                       "(SELECT institution from researchers group by institution order by count(*) desc limit 5 ) ")
+        rows = cursor.fetchall()
+        labels = ["Researchers from other institutions", "Researchers from top 5 institutions"]
+        distribution.append(rows[0][0])
+        distribution.append(rows[1][0])
+        return labels, distribution
 
-    
-    def researchers_per_top_inst(self):
-
+    def pie_chart_top_5_spec_vs_no_spec(self):
         conn = sqlite3.connect(self.DB_name)
         cursor = conn.cursor()
+        distribution = []
+        cursor.execute("select count(*) from Researchers group by Institution in "
+                       "(SELECT institution from researchers group by institution order by count(*) desc limit 5 ) ")
+        rows = cursor.fetchall()
+        labels = ["Researchers from other institutions", "Researchers from top 5 institutions"]
+        distribution.append(rows[0][0])
+        distribution.append(rows[1][0])
+        return labels, distribution
 
-        institutions = []
-        frequency = []
-
-        query = "SELECT Institution, Count(Institution) FROM Researchers "
-        query += "WHERE Institution = 'University of Cape Town' "
-        query += "OR Institution = 'University of the Witwatersrand' "
-        query += "OR Institution = 'University of Pretoria' "
-        query += "OR Institution = 'University of KwaZulu-Natal' "
-        query += "OR Institution = 'Stellenbosch University' "
-        query += "GROUP BY Institution;"
-
-        #print(query)
-        cursor.execute(query)
-        data = cursor.fetchall()
-        
-        #print_data(data)
-
-        for item in (data):
-            institutions.append(item[0])
-            frequency.append(item[1])
-
-        return  institutions, frequency
-
-
-    def primary_research_dist_by_top_inst(self):
-
+    def get_new_researchers(self):
+        query = "Select * from Researchers where not exists (SELECT * from PreviousResearchers where " \
+                "(PreviousResearchers.Surname = Researchers.Surname" \
+                " and PreviousResearchers.Initials = Researchers.Initials))"
         conn = sqlite3.connect(self.DB_name)
         cursor = conn.cursor()
-
-        primary = []
-        frequency = []
-
-        query = "SELECT PrimaryResearch, Count(PrimaryResearch) FROM Researchers "
-        query += "WHERE Institution = 'University of Cape Town' AND PrimaryResearch IS NOT NULL "
-        query += "OR Institution = 'University of the Witwatersrand' AND PrimaryResearch IS NOT NULL "
-        query += "OR Institution = 'University of Pretoria' AND PrimaryResearch IS NOT NULL "
-        query += "OR Institution = 'University of KwaZulu-Natal' AND PrimaryResearch IS NOT NULL "
-        query += "OR Institution = 'Stellenbosch University' AND PrimaryResearch IS NOT NULL  "
-        query += "GROUP BY PrimaryResearch;"
-
-        #print(query)
         cursor.execute(query)
-        data = cursor.fetchall()
-        
-        #print_data(data)
-
-        for item in (data):
-            primary.append(item[0])
-            frequency.append(item[1])
-
-        return  primary, frequency
-    
-    ##########
-
-    # ai_topics is an array of different AI topics, ["Artificial Intelligence", "Machine Learning", "Deep learning",..]
-    def clean_data(self, ai_topics):
-
-        conn = sqlite3.connect(self.DB_name)
-        cursor = conn.cursor()
-
-        query = "DELETE FROM Researchers"
-
-        specializations = " WHERE "
-        primary = " AND "
-        secondary = " AND "
-
-        for index in range(len(ai_topics)):
-
-            if index == len(ai_topics) - 1:
-
-                specializations += "Specializations NOT LIKE '%" + ai_topics[index] + "%'"
-                primary += "PrimaryResearch NOT LIKE '%" + ai_topics[index] + "%'"
-                secondary += "SecondaryResearch NOT LIKE '%" + ai_topics[index] + "%'"
-
-            else:
-
-                specializations += "Specializations NOT LIKE '%" + ai_topics[index] + "%' AND "
-                primary += "PrimaryResearch NOT LIKE '%" + ai_topics[index] + "%' AND "
-                secondary += "SecondaryResearch NOT LIKE '%" + ai_topics[index] + "%' AND "
-
-        query += specializations
-        query += primary
-        query += secondary
-
-        query += " OR Specializations IS NULL "
-        query += " OR PrimaryResearch IS NULL "
-        query += " OR SecondaryResearch IS NULL"
-
-        # print(query)
-        cursor.execute(query)
-
-        query2 = "SELECT * FROM Researchers"
-        cursor.execute(query2)
-        new_data = cursor.fetchall()
-
-        return new_data  # returns a new table after the cleaning the data
+        return cursor.fetchall()

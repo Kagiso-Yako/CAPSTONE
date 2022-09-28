@@ -33,7 +33,7 @@ Plotly.plot('page_rating_dist',graphs,{});
      <select name="Surname" class="filter" style="border:0px; float: right;width=150px;" id="input_surname">
         <option value="0">--</option>
         {% for option in surn %}
-          <option value={{option}} style="width:150px">{{option}}</option>
+          <option value={{option['surname']}} style="width:150px">{{option["surname"]}}</option>
         {% endfor %}
       </select>
     </label>
@@ -55,7 +55,7 @@ Plotly.plot('page_rating_dist',graphs,{});
       <select name="Institution" class="filter" style="border:0px; float: right;width:150px;" id="input_institution">
           <option value="0">--</option>
           {% for option in inst %}
-            <option value="{{option}}" style="width:150px">{{option}}</option>
+            <option value="{{option['institution']}}" style="width:150px">{{option["institution"]}}</option>
           {% endfor %}
       </select>
     </label>
@@ -109,10 +109,10 @@ Plotly.plot('page_rating_dist',graphs,{});
         <tr>
               <tbody>
 
-              <td class="surname"><a href={{'/researcher_'+row["surname"]}}>{{row["surname"]}}</a></td>
+              <td><a href={{'/researcher_'+row["id"]|string}}>{{row["surname"]}}</a></td>
               <td class="initials">{{row["initials"]}}</td>
               <td class="title">{{row["title"]}}</td>
-              <td class="institution"><a href={{'/inst_'+row["institution"].replace(' ','+')}}>{{row["institution"]}}</a></td>
+              <td class="institution"><a href={{'/inst_'+row["institution"].replace(" ","+")}}>{{row["institution"]}}</a></td>
               <td class="rating">{{row["rating"]}}</td>
               <td class="primaryResearch">{{row["primaryResearch"]}}</td>
               <td class="secondaryResearch">{{row["secondaryResearch"]}}</td>

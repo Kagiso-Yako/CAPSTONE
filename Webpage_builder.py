@@ -21,7 +21,7 @@ class Webpage_builder:
         excel_sheet_name = 'Current Rated Researchers (Webs'
         csv_file = "Data/DB.csv"
         self.NRF_database_file = "Data/Database.db"
-        specializations = ["Artificial Intelligence",
+        self.specializations = ["Artificial Intelligence",
                            "Computer vision",
                            "Natural language processing",
                            "Artificial Neural Networks",
@@ -30,7 +30,8 @@ class Webpage_builder:
                            "Knowledge representation and reasoning",
                            "Search methodologies",
                            "Machine learning",
-                           "Reinforcement learning"]
+                           "Reinforcement learning",
+                           "Machine intelligence"]
         self.columns = ["id INTEGER primary key autoincrement",
                    "Surname TEXT",
                    "Initials TEXT",
@@ -55,10 +56,10 @@ class Webpage_builder:
                        "Specializations"]
 
         self.auto = DB_auto_setup(self.NRF_database_file, excel_sheet_name, self.columns_csv, csv_file,
-                                  self.table_name, self.columns, specializations=specializations)
+                                  self.table_name, self.columns, specializations=self.specializations)
 
-        self.my_manager = DB_manager(self.NRF_database_file, specializations)
-        self.my_JSONs = Analysis(self.NRF_database_file, specializations)
+        self.my_manager = DB_manager(self.NRF_database_file, self.specializations)
+        self.my_JSONs = Analysis(self.NRF_database_file, self.specializations)
 
         self.populate_options()
     #
@@ -78,12 +79,6 @@ class Webpage_builder:
     #
 
     def homepage(self):
-        if request.method == "POST":
-            query = request.form["query"]
-            queryType = request.form.get('Querytype')
-            #results = handle_query(queryType, query)
-            results = []
-            return render_template("results.html", results=results)
         return render_template("index.html")
 
     def researchers_page(self):
@@ -108,7 +103,7 @@ class Webpage_builder:
             if rows is not None:
                 return render_template("researchers.html", rows=rows, options=options, sec=self.secondary_options,
                                        prim=self.primary_options, spec=self.specializations_options,
-                                       rating_dist=rating_dist_JSON)
+                                       rating_dist=rating_dist_JSON, inst=options[1], surn=options[0])
             else:
                 return render_template("Error_page.html")
 
@@ -140,7 +135,7 @@ class Webpage_builder:
         ratings_pie_JSON = self.my_JSONs.rating_pie_chart_JSON()
         ratings_per_topic = self.my_JSONs.researchers_per_topic_JSON("Artificial intelligence")
         ratings = self.my_JSONs.get_ratings_list()
-        researchers_per_field = self.my_JSONs.researchers_per_field_JSON()
+        researchers_per_field = self.my_JSONs.researchers_per_specializations_JSON()
         rating_percentages = []
         for rating in ratings:
             rating_percentages.append(round(int(rating) / sum(ratings) * 100))
@@ -153,6 +148,13 @@ class Webpage_builder:
         conn = sqlite3.connect(self.NRF_database_file)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
+
+        researchers_per_primary = self.my_JSONs.primary_research_top_inst_JSON(self.primary_options)
+        pie_chart_Top_5_inst_JSON = self.my_JSONs.top_5_researchers_distribution_JSON()
+        new_research = self.my_manager.get_new_researchers()
+        num_new_researchers = len(new_research)
+
+
         try:
             cursor.execute(SQL_queries.get_table(self.table_name))
             rows = cursor.fetchall()
@@ -162,7 +164,9 @@ class Webpage_builder:
                                rating_pie=ratings_pie_JSON, ratings=ratings, rating_p=rating_percentages,
                                sum=sum(ratings), prev_JSON=JSON_general_prev,
                                specialization_dist=researchers_per_field, ratings_per_topic=ratings_per_topic, max=maxi,
-                               min=mini, min_r=min_rating, max_r=max_rating, rows=rows, institutions=institutions[0:10])
+                               min=mini, min_r=min_rating, max_r=max_rating, rows=rows, institutions=institutions[0:10],
+                               topics=self.specializations, num_inst=len(institutions),
+                               researcher_primary=researchers_per_primary, pie_top_5_inst=pie_chart_Top_5_inst_JSON)
 
     def publications_page(self):
         if request.method == "POST":
@@ -179,6 +183,7 @@ class Webpage_builder:
         institution_dist, values = self.my_JSONs.researcher_rating_by_inst_JSON(institution)
         my_sum = 0
         rows = None
+        institution_data = []
         try:
             conn = sqlite3.connect(self.NRF_database_file)
             conn.row_factory = sqlite3.Row
@@ -188,12 +193,14 @@ class Webpage_builder:
                                                                                             quoted_inst, "=",
                                                                                             prefix="WHERE"))
             rows = cursor.fetchall()
+            cursor.execute("Select * from institutions where institution = " + quoted_inst)
+            institution_data = cursor.fetchall()
             my_sum = sum(values)
         except sqlite3.Error:
             print("Failed to connect to database for the creation of institution.html")
         if rows is not None:
             return render_template("institution.html", institution_dist=institution_dist, institution=institution,
-                                   sum=my_sum, values=values, rows=rows, logo_image=logo_image)
+                                   sum=my_sum, values=values, rows=rows, logo_image=logo_image, inst_data=institution_data)
         else:
             return render_template("Error_page.html")
 
@@ -213,13 +220,10 @@ class Webpage_builder:
             cursor.execute(query)
             rows = cursor.fetchall()
             prim = rows[0]["PrimaryResearch"].split(";")
-            print(prim)
             sec = rows[0]["SecondaryResearch"].split(";")
             spec = rows[0]["Specializations"].split(";")
             institution = rows[0]["Institution"].replace('+', ' ')
             logo_image = "static/images/" + institution + ".png"
-            print(logo_image)
-            print(spec)
         except sqlite3.Error:
             print("Failed to connect to database for the creation of researcher.html")
         if len(rows) != 0:
@@ -334,8 +338,8 @@ class Webpage_builder:
             fields = string_fields.split(";")
 
             for option in fields:
-                if option not in research_options:
-                    research_options.append(option)
+                if option.strip().lower() not in research_options:
+                    research_options.append(option.strip().lower())
 
         research_options.sort()
 

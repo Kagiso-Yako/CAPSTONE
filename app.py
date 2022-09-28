@@ -25,14 +25,6 @@ def index():
 def topics_data():
     return pages.graph_callback()
 
-@app.route("/callback_specializations_data", methods=["GET"])
-def specializations_data():
-    return pages.graph2_callback()
-
-@app.route("/callback_institutions_data", methods=["GET"])
-def institutions_data():
-    return pages.graph3_callback()
-
 @app.route("/trendsAndAnalysis", methods=["GET"])
 def trendsAndAnalysis():
     return pages.TrendsAndAnalysis_page()
